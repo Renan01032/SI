@@ -23,6 +23,7 @@ body {
     max-height: 800px;
     position: relative;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    background-color: white; /* Cor de fundo caso a imagem falhe */
 }
 
 .view {
@@ -41,13 +42,18 @@ body {
 
 /* --- TELA INICIAL (NOVO DESIGN) --- */
 #home-view {
-    background: url('../images/image_8bbaf9.jpg') no-repeat center center; /* Coloque o nome da sua nova imagem aqui */
+    /* Corrigido o caminho da imagem */
+    background: url('../images/home.png') no-repeat center center;
     background-size: cover;
 }
 
 #home-view .content {
     text-align: center;
     color: white;
+    width: 100%;
+    padding: 20px;
+    background-color: rgba(0,0,0,0.3); /* Adiciona um leve fundo para melhorar a leitura */
+    border-radius: 15px;
 }
 
 #home-view .logo {
@@ -94,11 +100,17 @@ body {
     font-size: 1.2rem;
     font-weight: bold;
     border: 2px solid #FFD700;
+    z-index: 10;
 }
 
 /* --- TELA DE SELEÇÃO DE FASES --- */
 #level-select-view {
     background: linear-gradient(135deg, #87CEEB, #98FB98);
+}
+
+#level-select-view h2 {
+    margin-bottom: 20px;
+    color: #333;
 }
 
 .level-grid {
@@ -137,56 +149,117 @@ body {
     cursor: not-allowed;
 }
 
-/* --- TELA DE JOGO (reaproveitando estilos) --- */
-/* Adicione aqui os estilos de .fase1, .grid, .cell, etc., do seu CSS antigo */
+/* --- TELA DE JOGO (Estilos reaproveitados e adaptados) --- */
 #game-view {
     background: url("../images/1- blur o cha de boneca.png") no-repeat center center;
     background-size: cover;
     padding: 10px;
+    justify-content: flex-start;
     overflow-y: auto;
 }
 
-/* Cole os estilos da seção "FASE 1" do seu CSS original aqui */
-/* ... Exemplo: #fase1.tela, .fase-header, .grid, .cell ... */
-/* Apenas ajuste o seletor principal de #fase1.tela para #game-view-content */
 #game-view-content {
-  background: rgba(255, 255, 255, 0.95);
-  max-width: 95%;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 15px;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    background: rgba(255, 255, 255, 0.95);
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 15px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
-/* Adapte os outros estilos conforme necessário */
 
+.fase-header {
+    background: linear-gradient(90deg, #dd3c8d, #be13a8);
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.imagem-historia img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+.texto-historia {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.lacuna {
+    display: inline-block;
+    background: #ffb5ef;
+    border: 2px dashed #ca1fc2;
+    padding: 2px 15px;
+    border-radius: 8px;
+    min-width: 60px;
+}
+
+.objetivo, .progresso {
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.caca-silabas {
+    background: #f7dafa;
+    padding: 15px;
+    border-radius: 15px;
+    margin-top: 10px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 2px;
+    justify-content: center;
+    margin: 10px auto;
+}
+
+.cell {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Mantém as células quadradas */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #DDD;
+    border-radius: 6px;
+    user-select: none;
+    font-weight: bold;
+    cursor: pointer;
+    background: white;
+    font-size: clamp(0.7em, 3vw, 1em);
+}
+
+.cell.selecionada { background: #8a2be2; color: white; }
+.cell.correta { background: #28a745; color: white; }
+
+.feedback {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    min-height: 40px;
+}
+
+.feedback.sucesso { background: #d4edda; color: #155724; }
+.feedback.erro { background: #f8d7da; color: #721c24; }
+.feedback.vitoria { background: #FFD700; color: #8B4513; }
 
 /* --- TELA DA LOJA --- */
 #shop-view {
     background: linear-gradient(135deg, #f093fb, #f5576c);
 }
 
-.shop-items {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.shop-item {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    text-align: center;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-
-.shop-item:hover {
-    background-color: white;
-}
+.shop-items { display: flex; flex-direction: column; gap: 15px; }
+.shop-item { background-color: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 10px; cursor: pointer; text-align: center; font-weight: bold; }
+.shop-item:hover { background-color: white; }
 
 .btn-back, .btn-shop {
     position: absolute;
@@ -196,8 +269,10 @@ body {
     border: none;
     cursor: pointer;
     font-size: 1rem;
+    background-color: white;
+    color: #333;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
-.btn-shop {
-    right: 20px;
-}
+.btn-shop { right: 20px; }
+.btn-back { left: 20px; }
