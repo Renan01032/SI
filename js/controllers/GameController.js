@@ -32,8 +32,7 @@ class GameController {
   _setBodyBackground(levelId = null) {
     const body = document.body
 
-    // Remove todas as classes de background
-    body.classList.remove("default-background", "game-background", "game-background-2")
+    body.classList.remove("default-background", "game-background", "game-background-2", "game-background-3")
 
     if (levelId === 1) {
       // Fase 1: usa a imagem blur como background
@@ -41,6 +40,8 @@ class GameController {
     } else if (levelId === 2) {
       // Fase 2: usa a imagem blur do menino e cachorro
       body.classList.add("game-background-2")
+    } else if (levelId === 3) {
+      body.classList.add("game-background-3")
     } else {
       // Todas as outras telas: background padrão #333
       body.classList.add("default-background")
@@ -76,11 +77,7 @@ class GameController {
     this._setBodyBackground()
 
     // Renderiza a grade de fases com os dados mais recentes do modelo
-    this.views.levelSelect.render(
-      this.model.levels,
-      this.model.state.unlockedLevel,
-      this.showGame
-    )
+    this.views.levelSelect.render(this.model.levels, this.model.state.unlockedLevel, this.showGame)
 
     this.views.levelSelect.show()
   }

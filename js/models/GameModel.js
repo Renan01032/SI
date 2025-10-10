@@ -25,7 +25,7 @@ class GameModel {
       },
       {
         id: 2,
-        title: "O Menino e o Cachorro Brincalhão",
+        title: "O Menino e o Cachorro",
         image: "images/2- o Menino e o Cachorro Brincalhão.png",
         story: `O me<span class="lacuna" data-silaba="NI">__</span>no saiu com seu cachorro.<br>
                         Levou uma bola para brincar no parque.<br>
@@ -35,6 +35,21 @@ class GameModel {
         objective: "Encontre as sílabas <strong>NI</strong> e <strong>SA</strong> para completar a história!",
         syllables: ["NI", "SA"],
         reward: 75,
+      },
+      {
+        id: 3,
+        title: "A Bola da Alegria",
+        image: "images/3- a bola da alegria.png",
+        story: `A bo<span class="lacuna" data-silaba="LA">__</span> vermelha gostava de pular,<br>
+                        No parque corria, não parava de rolar.<br>
+                        O <span class="lacuna" data-silaba="CA">__</span>chorro brincava, as crianças sorriam,<br>
+                        E até as go<span class="lacuna" data-silaba="TI">__</span>nhas da poça caíam.<br>
+                        Por isso diziam, com muita alegria:<br>
+                        "A bola vermelha só traz fantasia!"`,
+        objective:
+          "Encontre as sílabas <strong>LA</strong>, <strong>CA</strong> e <strong>TI</strong> para completar a história!",
+        syllables: ["LA", "CA", "TI"],
+        reward: 100,
       },
     ]
   }
