@@ -25,7 +25,7 @@ body.default-background {
 /* Background com imagem blur apenas para a fase 1 */
 body.game-background {
   background-color: #333;
-  background-image: url("../images/1- blur o cha de boneca.png");
+  background-image: url("../images/backgrounds/blur_o_cha_de_boneca.png");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -35,7 +35,7 @@ body.game-background {
 /* Background com imagem blur apenas para a fase 2 */
 body.game-background-2 {
   background-color: #333;
-  background-image: url("../images/2- blur O Menino e o Cachorro Brincalhão.png");
+  background-image: url("../images/backgrounds/blur_menino_cachorro.png");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -45,7 +45,7 @@ body.game-background-2 {
 /* Background com imagem blur para a fase 3 - A Bola da Alegria */
 body.game-background-3 {
   background-color: #333;
-  background-image: url("../images/3- blur a bola da alegria.png");
+  background-image: url("../images/backgrounds/blur_a_bola_da_alegria.png");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -94,7 +94,7 @@ body.game-background-3::before {
 
 /* --- TELA INICIAL (NOVO DESIGN) --- */
 #home-view {
-  background: url("../images/home.png") no-repeat center center;
+  background: url("../images/imagens/home.png") no-repeat center center;
   background-size: cover;
 }
 

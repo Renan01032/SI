@@ -13,7 +13,7 @@ class GameModel {
       {
         id: 1,
         title: "O Chá de Boneca",
-        image: "images/1- o cha de boneca.png",
+        image: "images/imagens/o_cha_de_boneca.png",
         story: `A menina tinha uma <span class="lacuna" data-silaba="BO">__</span>neca.<br>
                         Ela colocou a boneca em uma cadeira.<br>
                         Depois trouxe um copo de suco.<br>
@@ -26,7 +26,7 @@ class GameModel {
       {
         id: 2,
         title: "O Menino e o Cachorro",
-        image: "images/2- o Menino e o Cachorro Brincalhão.png",
+        image: "images/imagens/menino_cachorro.png",
         story: `O me<span class="lacuna" data-silaba="NI">__</span>no saiu com seu cachorro.<br>
                         Levou uma bola para brincar no parque.<br>
                         O cachorro correu atrás da bola.<br>
@@ -39,7 +39,7 @@ class GameModel {
       {
         id: 3,
         title: "A Bola da Alegria",
-        image: "images/3- a bola da alegria.png",
+        image: "images/imagens/a_bola_da_alegria.png",
         story: `A bo<span class="lacuna" data-silaba="LA">__</span> vermelha gostava de pular,<br>
                         No parque corria, não parava de rolar.<br>
                         O <span class="lacuna" data-silaba="CA">__</span>chorro brincava, as crianças sorriam,<br>
