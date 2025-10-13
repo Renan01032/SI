@@ -23,6 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Guarda referência do avatar no controller
   controller.avatar = avatar
   
+  // Carrega a skin atual do jogador
+  const currentSkin = model.state.currentSkin || "images/skins/default_male.png"
+  avatar.changeSkin(currentSkin)
+  
   // Mostra mensagem de boas-vindas
   setTimeout(() => {
     avatar.showRandomMessage('home')
