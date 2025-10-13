@@ -1,7 +1,8 @@
 class GameController {
-  constructor(model, views) {
+  constructor(model, views, avatar) {
     this.model = model
     this.views = views // {home, levelSelect, game, shop}
+    this.avatar = avatar // Avatar assistente
 
     // Garante que o 'this' dentro das funções sempre se refira ao controller
     this.showLevelSelect = this.showLevelSelect.bind(this)
@@ -69,6 +70,13 @@ class GameController {
     this._updateAllCredits()
     this._setBodyBackground()
     this.views.home.show()
+    
+    // Mensagem do avatar
+    if (this.avatar) {
+      setTimeout(() => {
+        this.avatar.showRandomMessage('home')
+      }, 500)
+    }
   }
 
   showLevelSelect() {
@@ -80,6 +88,13 @@ class GameController {
     this.views.levelSelect.render(this.model.levels, this.model.state.unlockedLevel, this.showGame)
 
     this.views.levelSelect.show()
+    
+    // Mensagem do avatar
+    if (this.avatar) {
+      setTimeout(() => {
+        this.avatar.showRandomMessage('levelSelect')
+      }, 500)
+    }
   }
 
   showGame(levelId) {
@@ -93,6 +108,13 @@ class GameController {
     this.views.game.render(levelData, () => this.handleLevelComplete(levelId))
     this.views.game.bindBackButton(this.showLevelSelect)
     this.views.game.show()
+    
+    // Mensagem do avatar
+    if (this.avatar) {
+      setTimeout(() => {
+        this.avatar.showRandomMessage('gameStart')
+      }, 500)
+    }
   }
 
   showShop() {
@@ -100,11 +122,27 @@ class GameController {
     this._updateAllCredits()
     this._setBodyBackground()
     this.views.shop.show()
+    
+    // Mensagem do avatar
+    if (this.avatar) {
+      setTimeout(() => {
+        this.avatar.showRandomMessage('shop')
+      }, 500)
+    }
   }
 
   handleLevelComplete(levelId) {
     console.log(`Fase ${levelId} completa!`)
     this.model.completeLevel(levelId)
-    this.showLevelSelect()
+    
+    // Celebração do avatar
+    if (this.avatar) {
+      this.avatar.celebrate()
+      this.avatar.showRandomMessage('gameComplete')
+    }
+    
+    setTimeout(() => {
+      this.showLevelSelect()
+    }, 2000)
   }
 }

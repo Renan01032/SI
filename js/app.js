@@ -11,11 +11,22 @@ document.addEventListener("DOMContentLoaded", () => {
     shop: new ShopView(),
   }
 
-  // 3. Cria o Controller, entregando o modelo e as views para ele
+  // 3. Cria o Controller primeiro
   const controller = new GameController(model, views)
 
   // 4. Manda o Controller iniciar o jogo
   controller.init()
+
+  // 5. Cria o Avatar Assistente depois que tudo estiver pronto
+  const avatar = new AvatarAssistant()
+  
+  // Guarda referência do avatar no controller
+  controller.avatar = avatar
+  
+  // Mostra mensagem de boas-vindas
+  setTimeout(() => {
+    avatar.showRandomMessage('home')
+  }, 800)
 
   console.log("Sílabas Mágicas iniciado!")
 })
