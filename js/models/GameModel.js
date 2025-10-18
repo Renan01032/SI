@@ -1,298 +1,202 @@
+// js/models/GameModel.js
 class GameModel {
   constructor() {
-    // Dados padrão para um novo jogador
-    this.defaultState = {
-      credits: 0,
-      unlockedLevel: 1,
-      currentSkin: "images/skins/default_male.png",
-      ownedSkins: ["default_male", "default_female"],
-    }
-    // Carrega o estado do jogo ou usa o padrão
-    this.state = this.loadState()
-
-    // Catálogo de skins disponíveis na loja
-    this.skins = [
-      // Skins padrão (gratuitas)
-      {
-        id: "default_male",
-        name: "Menino Padrão",
-        image: "images/skins/default_male.png",
-        price: 0,
-        unlockLevel: 0,
-        isDefault: true
-      },
-      {
-        id: "default_female",
-        name: "Menina Padrão",
-        image: "images/skins/default_female.png",
-        price: 0,
-        unlockLevel: 0,
-        isDefault: true
-      },
-      // Skins desbloqueáveis por fase
-      {
-        id: "avatar_fada",
-        name: "Fada Mágica",
-        image: "images/skins/avatar_fada.png",
-        price: 100,
-        unlockLevel: 1,
-        isDefault: false
-      },
-      {
-        id: "avatar_pirata",
-        name: "Pirata",
-        image: "images/skins/avatar_pirata.png",
-        price: 150,
-        unlockLevel: 2,
-        isDefault: false
-      },
-      {
-        id: "avatar_princesa",
-        name: "Princesa",
-        image: "images/skins/avatar_princesa.png",
-        price: 150,
-        unlockLevel: 2,
-        isDefault: false
-      },
-      {
-        id: "avatar_cavaleiro_cosmico",
-        name: "Cavaleiro Cósmico",
-        image: "images/skins/avatar_cavaleiro_cosmico.png",
-        price: 200,
-        unlockLevel: 3,
-        isDefault: false
-      },
-      {
-        id: "avatar_mago",
-        name: "Mago",
-        image: "images/skins/avatar_mago.png",
-        price: 200,
-        unlockLevel: 3,
-        isDefault: false
-      },
-      {
-        id: "avatar_rainha",
-        name: "Rainha",
-        image: "images/skins/avatar_rainha.png",
-        price: 250,
-        unlockLevel: 4,
-        isDefault: false
-      },
-      {
-        id: "avatar_rei",
-        name: "Rei",
-        image: "images/skins/avatar_rei.png",
-        price: 250,
-        unlockLevel: 4,
-        isDefault: false
-      },
-      {
-        id: "avatar_fada_celestial",
-        name: "Fada Celestial",
-        image: "images/skins/avatar_fada_celestial.png",
-        price: 300,
-        unlockLevel: 5,
-        isDefault: false
-      },
-      {
-        id: "avatar_dragao",
-        name: "Dragão",
-        image: "images/skins/avatar_dragao.png",
-        price: 350,
-        unlockLevel: 5,
-        isDefault: false
-      },
-      {
-        id: "avatar_guerreiro_elemental",
-        name: "Guerreiro Elemental",
-        image: "images/skins/avatar_guerreiro_elemental.png",
-        price: 400,
-        unlockLevel: 5,
-        isDefault: false
-      },
-    ]
-
-    // Dados de todas as fases do jogo
+    // Dados das fases e suas histórias
     this.levels = [
-      {
+      { // Fase 1
         id: 1,
-        title: "O Chá de Boneca",
-        image: "images/imagens/o_cha_de_boneca.png",
-        story: `A menina tinha uma <span class="lacuna" data-silaba="BO">__</span>neca.<br>
-                        Ela colocou a boneca em uma cadeira.<br>
-                        Depois trouxe um copo de suco.<br>
-                        "Vamos brincar de chá!", disse animada.<br>
-                        A boneca parecia sorrir de alegria.`,
-        objective: "Encontre a sílaba <strong>BO</strong> para completar a história!",
-        syllables: ["BO"],
-        reward: 50,
-        rewardSkin: "avatar_fada" // Fada Mágica
+        name: 'Fase 1 - Coisas Simples',
+        stories: [
+          { storyId: 101, image: 'images/fase1/bola.png', word: 'BOLA', syllables: ['BO', 'LA', 'CA', 'SA'], reward: 10 },
+          { storyId: 102, image: 'images/fase1/sapo.png', word: 'SAPO', syllables: ['SA', 'PO', 'LU', 'VA'], reward: 10 },
+          { storyId: 103, image: 'images/fase1/mala.png', word: 'MALA', syllables: ['MA', 'LA', 'FO', 'CA'], reward: 10 },
+          { storyId: 104, image: 'images/fase1/casa.png', word: 'CASA', syllables: ['CA', 'SA', 'BO', 'NE'], reward: 10 },
+          { storyId: 105, image: 'images/fase1/pato.png', word: 'PATO', syllables: ['PA', 'TO', 'DA', 'DO'], reward: 10 }
+        ]
       },
-      {
+      { // Fase 2
         id: 2,
-        title: "O Menino e o Cachorro",
-        image: "images/imagens/menino_cachorro.png",
-        story: `O me<span class="lacuna" data-silaba="NI">__</span>no saiu com seu cachorro.<br>
-                        Levou uma bola para brincar no parque.<br>
-                        O cachorro correu atrás da bola.<br>
-                        O menino riu e correu também.<br>
-                        No fim, os dois voltaram felizes para ca<span class="lacuna" data-silaba="SA">__</span>.`,
-        objective: "Encontre as sílabas <strong>NI</strong> e <strong>SA</strong> para completar a história!",
-        syllables: ["NI", "SA"],
-        reward: 75,
-        rewardSkin: "avatar_pirata" // Pirata
+        name: 'Fase 2 - Animais',
+        stories: [
+          { storyId: 201, image: 'images/fase2/gato.png', word: 'GATO', syllables: ['GA', 'TO', 'PE', 'RA'], reward: 15 },
+          { storyId: 202, image: 'images/fase2/vaca.png', word: 'VACA', syllables: ['VA', 'CA', 'FA', 'DA'], reward: 15 },
+          { storyId: 203, image: 'images/fase2/cavalo.png', word: 'CAVALO', syllables: ['CA', 'VA', 'LO', 'PE', 'XE'], reward: 15 },
+          { storyId: 204, image: 'images/fase2/macaco.png', word: 'MACACO', syllables: ['MA', 'CA', 'CO', 'BO', 'NA'], reward: 15 },
+          { storyId: 205, image: 'images/fase2/leao.png', word: 'LEAO', syllables: ['LE', 'AO', 'TI', 'GRE'], reward: 15 } // Atenção ao ditongo 'AO' como sílaba
+        ]
       },
-      {
+      { // Fase 3
         id: 3,
-        title: "A Bola da Alegria",
-        image: "images/imagens/a_bola_da_alegria.png",
-        story: `A bo<span class="lacuna" data-silaba="LA">__</span> vermelha gostava de pular,<br>
-                        No parque corria, não parava de rolar.<br>
-                        O <span class="lacuna" data-silaba="CA">__</span>chorro brincava, as crianças sorriam,<br>
-                        E até as go<span class="lacuna" data-silaba="TI">__</span>nhas da poça caíam.<br>
-                        Por isso diziam, com muita alegria:<br>
-                        "A bola vermelha só traz fantasia!"`,
-        objective:
-          "Encontre as sílabas <strong>LA</strong>, <strong>CA</strong> e <strong>TI</strong> para completar a história!",
-        syllables: ["LA", "CA", "TI"],
-        reward: 100,
-        rewardSkin: "avatar_mago" // Mago
+        name: 'Fase 3 - Brinquedos',
+        stories: [
+          { storyId: 301, image: 'images/fase3/boneca.png', word: 'BONECA', syllables: ['BO', 'NE', 'CA', 'PI', 'PA'], reward: 20 },
+          { storyId: 302, image: 'images/fase3/pipa.png', word: 'PIPA', syllables: ['PI', 'PA', 'BO', 'LA'], reward: 20 },
+          { storyId: 303, image: 'images/fase3/carrinho.png', word: 'CARRINHO', syllables: ['CAR', 'RI', 'NHO', 'PE', 'AO'], reward: 20 },
+          { storyId: 304, image: 'images/fase3/peteca.png', word: 'PETECA', syllables: ['PE', 'TE', 'CA', 'RO', 'DA'], reward: 20 },
+          { storyId: 305, image: 'images/fase3/cubo.png', word: 'CUBO', syllables: ['CU', 'BO', 'DA', 'DO'], reward: 20 }
+        ]
       },
-    ]
-  }
-
-  // Carrega o progresso do jogador
-  loadState() {
-    const savedState = localStorage.getItem("silabasMagicasState")
-    if (savedState) {
-      const parsed = JSON.parse(savedState)
-      // Garante que os novos campos existam mesmo em saves antigos
-      return {
-        credits: parsed.credits || 0,
-        unlockedLevel: parsed.unlockedLevel || 1,
-        currentSkin: parsed.currentSkin || "images/skins/default_male.png",
-        ownedSkins: parsed.ownedSkins || ["default_male", "default_female"]
+      { // Fase 4
+        id: 4,
+        name: 'Fase 4 - Comidas',
+        stories: [
+          { storyId: 401, image: 'images/fase4/banana.png', word: 'BANANA', syllables: ['BA', 'NA', 'NA', 'MA', 'CA'], reward: 25 },
+          { storyId: 402, image: 'images/fase4/maca.png', word: 'MACA', syllables: ['MA', 'CA', 'PE', 'RA'], reward: 25 }, // Atenção ao Ç
+          { storyId: 403, image: 'images/fase4/pao.png', word: 'PAO', syllables: ['PAO', 'LEI', 'TE'], reward: 25 }, // Atenção ao ditongo 'AO'
+          { storyId: 404, image: 'images/fase4/bolo.png', word: 'BOLO', syllables: ['BO', 'LO', 'SU', 'CO'], reward: 25 },
+          { storyId: 405, image: 'images/fase4/laranja.png', word: 'LARANJA', syllables: ['LA', 'RAN', 'JA', 'U', 'VA'], reward: 25 }
+        ]
+      },
+      { // Fase 5
+        id: 5,
+        name: 'Fase 5 - Natureza',
+        stories: [
+          { storyId: 501, image: 'images/fase5/sol.png', word: 'SOL', syllables: ['SOL', 'LUA', 'MAR'], reward: 30 },
+          { storyId: 502, image: 'images/fase5/lua.png', word: 'LUA', syllables: ['LU', 'A', 'SOL', 'CEU'], reward: 30 },
+          { storyId: 503, image: 'images/fase5/arvore.png', word: 'ARVORE', syllables: ['AR', 'VO', 'RE', 'FLOR', 'SOL'], reward: 30 },
+          { storyId: 504, image: 'images/fase5/flor.png', word: 'FLOR', syllables: ['FLOR', 'MAR', 'CEU', 'RE'], reward: 30 },
+          { storyId: 505, image: 'images/fase5/nuvem.png', word: 'NUVEM', syllables: ['NU', 'VEM', 'CHU', 'VA'], reward: 30 }
+        ]
+      },
+      { // Fase Bônus
+        id: 6,
+        name: 'Fase Bônus - Desafio!',
+        isBonus: true, // Flag para identificar a fase bônus
+        stories: [ // Pode ter uma estrutura diferente ou desafios únicos
+          { storyId: 601, image: 'images/bonus/desafio1.png', word: 'DESAFIO', syllables: ['DE', 'SA', 'FI', 'O', 'BONUS', 'EXTRA'], reward: 50 }
+          // Adicionar mais desafios/histórias bônus se necessário
+        ]
       }
-    }
-    return this.defaultState
+    ];
+
+    // Dados das skins (mantidos da versão anterior)
+    this.skins = {
+        'default_male': { name: 'Padrão Masculino', path: 'images/skins/default_male.png', price: 0 },
+        'default_female': { name: 'Padrão Feminino', path: 'images/skins/default_female.png', price: 0 },
+        'avatar_cavaleiro_cósmico': { name: 'Cavaleiro Cósmico', path: 'images/skins/avatar_cavaleiro_cósmico.png', price: 50 },
+        'avatar_dragão': { name: 'Dragão', path: 'images/skins/avatar_dragão.png', price: 75 },
+        'avatar_fada': { name: 'Fada', path: 'images/skins/avatar_fada.png', price: 50 },
+        'avatar_fada_celestial': { name: 'Fada Celestial', path: 'images/skins/avatar_fada_celestial.png', price: 100 },
+        'avatar_guerreiro_elemental': { name: 'Guerreiro Elemental', path: 'images/skins/avatar_guerreiro_elemental.png', price: 100 },
+        'avatar_mago': { name: 'Mago', path: 'images/skins/avatar_mago.png', price: 75 },
+        'avatar_pirata': { name: 'Pirata', path: 'images/skins/avatar_pirata.png', price: 50 },
+        'avatar_princesa': { name: 'Princesa', path: 'images/skins/avatar_princesa.png', price: 75 },
+        'avatar_rei': { name: 'Rei', path: 'images/skins/avatar_rei.png', price: 100 },
+        'avatar_rainha': { name: 'Rainha', path: 'images/skins/avatar_rainha.png', price: 100 }
+      };
+
+    // Estado inicial do jogo (mantido da versão anterior)
+    this.state = {
+        username: 'jogador_teste',
+        credits: 0,
+        unlockedLevel: 1,
+        ownedSkins: ['default_male', 'default_female'],
+        currentSkin: 'default_male'
+      };
+
+    // Tenta carregar o estado do localStorage (mantido da versão anterior)
+    this.loadState();
   }
 
-  // Salva o progresso
+  // --- Gerenciamento de Estado (mantido da versão anterior) ---
+  loadState() {
+    const savedState = localStorage.getItem(`silabasMagicas_${this.state.username}`);
+    if (savedState) {
+      try {
+        const parsedState = JSON.parse(savedState);
+        this.state = { ...this.state, ...parsedState };
+        console.log('Estado do jogo carregado:', this.state);
+      } catch (error) {
+        console.error('Erro ao carregar o estado do jogo:', error);
+        this.saveState();
+      }
+    } else {
+      this.saveState();
+    }
+  }
+
   saveState() {
-    localStorage.setItem("silabasMagicasState", JSON.stringify(this.state))
+    try {
+      localStorage.setItem(`silabasMagicas_${this.state.username}`, JSON.stringify(this.state));
+      console.log('Estado do jogo salvo:', this.state);
+    } catch (error) {
+      console.error('Erro ao salvar o estado do jogo:', error);
+    }
+    // TODO: Implementar salvamento no backend via API
+    // this.saveStateToAPI();
   }
 
-  // Adiciona créditos ao jogador
-  addCredits(amount) {
-    this.state.credits += amount
-    this.saveState()
-  }
+  // --- Lógica das Fases (Atualizada) ---
 
-  // Remove créditos
-  removeCredits(amount) {
-    this.state.credits -= amount
-    this.saveState()
-  }
-
-  // Retorna os dados de uma fase específica
+  // Retorna os dados de uma fase específica pelo ID
   getLevelData(levelId) {
-    return this.levels.find((level) => level.id === levelId)
+    return this.levels.find(level => level.id === levelId);
   }
 
-  // Desbloqueia a próxima fase
-  completeLevel(levelId) {
-    const levelData = this.getLevelData(levelId)
-    if (levelData) {
-      this.addCredits(levelData.reward)
+  // Retorna uma história aleatória para uma fase específica
+  getRandomStoryForLevel(levelId) {
+    const level = this.getLevelData(levelId);
+    if (!level || !level.stories || level.stories.length === 0) {
+      return null; // Retorna null se a fase não tiver histórias
     }
-
-    // Se a fase completada for a última desbloqueada, avança
-    if (levelId === this.state.unlockedLevel && levelId < this.levels.length) {
-      this.state.unlockedLevel++
-      
-      // Premia com uma skin ao completar a fase
-      this.unlockLevelRewardSkin(levelId)
-      
-      this.saveState()
-    }
+    const randomIndex = Math.floor(Math.random() * level.stories.length);
+    return level.stories[randomIndex];
   }
 
-  // Desbloqueia a skin de recompensa da fase
-  unlockLevelRewardSkin(levelId) {
-    // Define qual skin é desbloqueada em cada fase
-    const rewardSkins = {
-      1: "avatar_fada",           // Fase 1 -> Fada Mágica
-      2: "avatar_pirata",         // Fase 2 -> Pirata
-      3: "avatar_mago"            // Fase 3 -> Mago
+  // Marca uma fase como completa, desbloqueia a próxima e adiciona créditos
+  completeLevel(levelId, storyReward) { // Agora recebe a recompensa da história
+    if (!storyReward) {
+        console.warn(`Recompensa não definida para a fase ${levelId} completada.`);
+        storyReward = 0; // Define uma recompensa padrão ou busca no levelData se necessário
     }
-    
-    const rewardSkinId = rewardSkins[levelId]
-    
-    if (rewardSkinId && !this.hasSkin(rewardSkinId)) {
-      this.state.ownedSkins.push(rewardSkinId)
-      this.saveState()
-      return rewardSkinId
+
+    this.state.credits += storyReward;
+
+    // Desbloqueia a próxima fase se ela existir e ainda não estiver desbloqueada
+    const currentLevelIndex = this.levels.findIndex(l => l.id === levelId);
+    if (currentLevelIndex !== -1 && currentLevelIndex + 1 < this.levels.length) {
+        const nextLevelId = this.levels[currentLevelIndex + 1].id;
+         if (this.state.unlockedLevel < nextLevelId) {
+             this.state.unlockedLevel = nextLevelId;
+         }
     }
-    
-    return null
+
+    this.saveState();
   }
 
-  // Verifica se o jogador possui uma skin
-  hasSkin(skinId) {
-    return this.state.ownedSkins.includes(skinId)
-  }
-
-  // Compra uma skin
-  buySkin(skinId) {
-    const skin = this.skins.find(s => s.id === skinId)
-    
-    if (!skin) return { success: false, message: "Skin não encontrada!" }
-    
-    if (this.hasSkin(skinId)) {
-      return { success: false, message: "Você já possui esta skin!" }
-    }
-    
-    if (this.state.credits < skin.price) {
-      return { success: false, message: "Créditos insuficientes!" }
-    }
-    
-    if (this.state.unlockedLevel < skin.unlockLevel) {
-      return { success: false, message: "Complete mais fases para desbloquear!" }
-    }
-    
-    // Compra bem-sucedida
-    this.removeCredits(skin.price)
-    this.state.ownedSkins.push(skinId)
-    this.saveState()
-    
-    return { success: true, message: "Skin comprada com sucesso!" }
-  }
-
-  // Equipa uma skin
-  equipSkin(skinId) {
-    if (!this.hasSkin(skinId)) {
-      return { success: false, message: "Você não possui esta skin!" }
-    }
-    
-    const skin = this.skins.find(s => s.id === skinId)
-    if (skin) {
-      this.state.currentSkin = skin.image
-      this.saveState()
-      return { success: true, message: "Skin equipada!", skinPath: skin.image }
-    }
-    
-    return { success: false, message: "Erro ao equipar skin!" }
-  }
-
-  // Retorna skins disponíveis para o jogador
+  // --- Lógica da Loja (mantida da versão anterior) ---
   getAvailableSkins() {
-    return this.skins.filter(skin => 
-      skin.isDefault || this.state.unlockedLevel >= skin.unlockLevel
-    )
+    return this.skins;
   }
 
-  // Retorna informações de uma skin
-  getSkinInfo(skinId) {
-    return this.skins.find(s => s.id === skinId)
+  buySkin(skinId) {
+    const skin = this.skins[skinId];
+    if (!skin) return { success: false, message: 'Skin inválida!' };
+    if (this.state.ownedSkins.includes(skinId)) return { success: false, message: 'Você já possui esta skin!' };
+    if (this.state.credits < skin.price) return { success: false, message: 'Créditos insuficientes!' };
+
+    this.state.credits -= skin.price;
+    this.state.ownedSkins.push(skinId);
+    this.saveState();
+    return { success: true, message: `Skin "${skin.name}" comprada com sucesso!` };
   }
+
+  equipSkin(skinId) {
+    if (!this.skins[skinId]) return { success: false, message: 'Skin inválida!' };
+    if (!this.state.ownedSkins.includes(skinId)) return { success: false, message: 'Você não possui esta skin!' };
+    if (this.state.currentSkin === skinId) return { success: false, message: 'Esta skin já está equipada!' };
+
+    this.state.currentSkin = skinId;
+    this.saveState();
+    const skinPath = this.skins[skinId]?.path;
+    return { success: true, message: `Skin "${this.skins[skinId].name}" equipada!`, skinPath: skinPath };
+  }
+
+  getCurrentSkinPath() {
+    return this.skins[this.state.currentSkin]?.path || this.skins['default_male'].path;
+  }
+
+  // --- Interação com API (mantida da versão anterior - exemplos) ---
+  async loadStateFromAPI() { /* ... */ }
+  async saveStateToAPI() { /* ... */ }
 }
