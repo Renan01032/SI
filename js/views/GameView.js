@@ -4,216 +4,242 @@ class GameView {
     this.gameContainer = document.getElementById('game-view');
     this.onLevelComplete = null;
     this.onBack = null;
-    this.selectedSyllables = [];
-    this.correctWord = '';
-    this.levelId = null;
-    this.currentStory = null; // Para armazenar a história atual
+    this.currentLevel = null;
+    this.currentStory = null;
+    this.selectedCells = [];
+    this.isGameComplete = false;
 
-    // Garante o 'this' correto nos handlers de evento
-    this.handleSyllableClick = this.handleSyllableClick.bind(this);
+    this.handleCellClick = this.handleCellClick.bind(this);
     this.handleClearClick = this.handleClearClick.bind(this);
     this.handleBackspaceClick = this.handleBackspaceClick.bind(this);
   }
 
-  // Renderiza a tela do jogo com uma história aleatória da fase
-  render(levelData, onLevelCompleteCallback) { // Renomeado para evitar conflito
-    this.onLevelComplete = onLevelCompleteCallback; // Armazena o callback passado pelo controller
-
-    // Verifica se há histórias disponíveis
+  render(levelData, onLevelCompleteCallback) {
+    this.onLevelComplete = onLevelCompleteCallback;
+    this.currentLevel = levelData;
+    
     if (!levelData || !levelData.stories || levelData.stories.length === 0) {
-      console.error('Dados da fase inválidos ou sem histórias:', levelData);
-      this.gameContainer.innerHTML = `
-        <div class="game-content error-message">
-            Erro ao carregar a fase. Não foram encontradas histórias.
-            <button id="back-to-levels-from-game" class="btn-back">⬅ Voltar</button>
-        </div>`;
-      // Vincula o botão voltar mesmo em caso de erro (o controller fará isso)
+      console.error('Dados da fase inválidos:', levelData);
+      this.showError();
       return;
     }
 
-    // Seleciona uma história aleatória
+    // Seleciona história aleatória
     const randomIndex = Math.floor(Math.random() * levelData.stories.length);
-    this.currentStory = levelData.stories[randomIndex]; // Armazena a história atual
+    this.currentStory = levelData.stories[randomIndex];
+    this.selectedCells = [];
+    this.isGameComplete = false;
 
-    this.selectedSyllables = [];
-    this.correctWord = this.currentStory.word; // Palavra da história sorteada
-    this.levelId = levelData.id;
-
-    // Embaralha as sílabas da história sorteada
-    const shuffledSyllables = [...this.currentStory.syllables].sort(() => Math.random() - 0.5);
-
-    let syllablesHTML = shuffledSyllables.map(syllable =>
-      `<button class="syllable-btn">${syllable}</button>`
-    ).join('');
-
-    // Monta o HTML usando os dados da história atual (this.currentStory)
-    this.gameContainer.innerHTML = `
-      <div class="game-content">
-        <h3 class="level-title">${levelData.name}</h3>
-        <img src="${this.currentStory.image}" alt="Imagem da história ${this.currentStory.storyId}" class="game-image">
-
-        <div id="word-display-container">
-            <div id="word-display" class="word-display"></div>
-            <button id="backspace-button" class="btn-control btn-backspace" title="Apagar última sílaba">⌫</button>
-        </div>
-
-        <div class="syllables-container">${syllablesHTML}</div>
-
-        <div class="game-controls">
-             <button id="clear-button" class="btn-control btn-clear">Limpar</button>
-             <button id="back-to-levels-from-game" class="btn-back">⬅ Voltar</button>
-        </div>
-
-        <div id="game-message" class="message-area"></div>
-      </div>
-    `;
-
-    this.wordDisplayElement = this.gameContainer.querySelector('#word-display');
-    this.messageElement = this.gameContainer.querySelector('#game-message');
-
-    this.bindSyllableButtons();
-    this.bindControlButtons();
-    // O botão de voltar é vinculado separadamente pelo controller usando bindBackButton
+    this.renderGameInterface();
+    this.bindEvents();
   }
 
-  // Vincula eventos de clique aos botões de sílaba
-  bindSyllableButtons() {
-    const syllableButtons = this.gameContainer.querySelectorAll('.syllable-btn');
-    syllableButtons.forEach(button => {
-      button.addEventListener('click', () => this.handleSyllableClick(button.textContent));
+  renderGameInterface() {
+    const grid = this.generateWordSearchGrid();
+    
+    this.gameContainer.innerHTML = `
+      <div class="game-card">
+        <div class="game-header">
+          <button id="back-to-levels-from-game" class="btn-back-header">⬅</button>
+          <h2>${this.currentLevel.name}</h2>
+        </div>
+
+        <div class="reference-image-container">
+          <img src="${this.currentStory.image}" alt="Imagem da história" class="reference-image">
+        </div>
+
+        <div class="objective-banner">
+          Encontre a palavra: <strong>${this.currentStory.word}</strong>
+        </div>
+
+        <div class="syllable-info">
+          <span class="hint-label">DICA</span>
+          <button class="hint-button">💡</button>
+        </div>
+
+        <div class="hunt-section">
+          <div class="hunt-header">CAÇA-SÍLABAS</div>
+          <div class="grid-container">
+            <div class="grid" id="word-search-grid">
+              ${grid}
+            </div>
+          </div>
+        </div>
+
+        <div class="feedback" id="game-feedback"></div>
+
+        <div class="game-controls">
+          <button id="clear-button" class="btn-control btn-clear">Limpar Seleção</button>
+        </div>
+      </div>
+    `;
+  }
+
+  generateWordSearchGrid() {
+    const word = this.currentStory.word.toUpperCase();
+    const syllables = this.currentStory.syllables;
+    const gridSize = 8;
+    let gridHTML = '';
+
+    // Grid simples para demonstração - em um projeto real, implementar lógica de caça-palavras
+    for (let i = 0; i < gridSize; i++) {
+      for (let j = 0; j < gridSize; j++) {
+        const randomChar = this.getRandomCharacter();
+        gridHTML += `<div class="cell" data-row="${i}" data-col="${j}">${randomChar}</div>`;
+      }
+    }
+
+    // Insere a palavra horizontalmente na primeira linha
+    for (let i = 0; i < word.length && i < gridSize; i++) {
+      const cell = this.gameContainer.querySelector(`.cell[data-row="0"][data-col="${i}"]`);
+      if (cell) {
+        cell.textContent = word[i];
+        cell.dataset.letter = word[i];
+      }
+    }
+
+    return gridHTML;
+  }
+
+  getRandomCharacter() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return chars[Math.floor(Math.random() * chars.length)];
+  }
+
+  bindEvents() {
+    const cells = this.gameContainer.querySelectorAll('.cell');
+    cells.forEach(cell => {
+      cell.addEventListener('click', () => this.handleCellClick(cell));
+    });
+
+    const clearButton = this.gameContainer.querySelector('#clear-button');
+    if (clearButton) {
+      clearButton.addEventListener('click', this.handleClearClick);
+    }
+
+    this.bindBackButton(this.onBack);
+  }
+
+  handleCellClick(cell) {
+    if (this.isGameComplete) return;
+
+    const letter = cell.textContent;
+    const row = parseInt(cell.dataset.row);
+    const col = parseInt(cell.dataset.col);
+
+    // Verifica se a célula já foi selecionada
+    const alreadySelected = this.selectedCells.some(selected => 
+      selected.row === row && selected.col === col
+    );
+
+    if (!alreadySelected) {
+      this.selectedCells.push({ row, col, letter });
+      cell.classList.add('selecionada');
+      
+      this.checkWord();
+    }
+  }
+
+  checkWord() {
+    const selectedWord = this.selectedCells.map(cell => cell.letter).join('');
+    const targetWord = this.currentStory.word.toUpperCase();
+
+    if (selectedWord === targetWord) {
+      this.isGameComplete = true;
+      this.showFeedback('Parabéns! Você encontrou a palavra!', 'vitoria');
+      this.highlightCorrectCells();
+      
+      setTimeout(() => {
+        if (this.onLevelComplete && this.currentStory) {
+          this.onLevelComplete(this.currentLevel.id, this.currentStory.reward);
+        }
+      }, 1500);
+    } else if (selectedWord.length === targetWord.length) {
+      this.showFeedback('Palavra incorreta! Tente novamente.', 'erro');
+      setTimeout(() => {
+        this.handleClearClick();
+      }, 1000);
+    }
+  }
+
+  highlightCorrectCells() {
+    const cells = this.gameContainer.querySelectorAll('.cell');
+    cells.forEach(cell => {
+      if (cell.classList.contains('selecionada')) {
+        cell.classList.add('correta');
+        cell.classList.remove('selecionada');
+      }
     });
   }
 
-  // Vincula eventos aos botões de controle (Limpar, Apagar)
-  bindControlButtons() {
-    const clearButton = this.gameContainer.querySelector('#clear-button');
-    const backspaceButton = this.gameContainer.querySelector('#backspace-button');
+  handleClearClick() {
+    this.selectedCells = [];
+    const cells = this.gameContainer.querySelectorAll('.cell');
+    cells.forEach(cell => {
+      cell.classList.remove('selecionada');
+    });
+    this.clearFeedback();
+  }
 
-    if (clearButton) {
-        clearButton.addEventListener('click', this.handleClearClick);
-    }
-    if (backspaceButton) {
-        backspaceButton.addEventListener('click', this.handleBackspaceClick);
+  handleBackspaceClick() {
+    if (this.selectedCells.length > 0) {
+      const lastCell = this.selectedCells.pop();
+      const cell = this.gameContainer.querySelector(
+        `.cell[data-row="${lastCell.row}"][data-col="${lastCell.col}"]`
+      );
+      if (cell) {
+        cell.classList.remove('selecionada');
+      }
+      this.clearFeedback();
     }
   }
 
-  // Ação ao clicar em uma sílaba
-  handleSyllableClick(syllable) {
-    this.clearMessage();
-    // Não adiciona mais sílabas se a palavra já estiver completa
-    if (this.selectedSyllables.join('').length >= this.correctWord.length) {
-        return;
-    }
-    this.selectedSyllables.push(syllable);
-    this.updateWordDisplay();
-
-    const currentWord = this.selectedSyllables.join('');
-
-    // Verifica se acertou
-    if (currentWord === this.correctWord) {
-      this.showMessage('Parabéns, você acertou!', 'success');
-      this.disableButtons();
-      setTimeout(() => {
-        if (this.onLevelComplete && this.currentStory) {
-          // Passa o ID da fase e a recompensa da história específica para o callback
-          this.onLevelComplete(this.levelId, this.currentStory.reward);
-        }
-      }, 1200);
-    }
-    // Verifica se errou (formou uma palavra do tamanho correto, mas incorreta)
-    else if (currentWord.length === this.correctWord.length) {
-      this.showMessage('Você errou, tente novamente!', 'error');
-       setTimeout(() => {
-           this.handleClearClick(); // Limpa automaticamente após erro
-       }, 1000);
+  showFeedback(message, type) {
+    const feedback = this.gameContainer.querySelector('#game-feedback');
+    if (feedback) {
+      feedback.textContent = message;
+      feedback.className = `feedback ${type}`;
     }
   }
 
-    // Ação ao clicar no botão Limpar
-    handleClearClick() {
-        this.selectedSyllables = [];
-        this.updateWordDisplay();
-        this.clearMessage();
-        this.enableButtons(); // Reabilita botões se limpou manualmente após erro
-    }
-
-    // Ação ao clicar no botão Apagar (⌫)
-    handleBackspaceClick() {
-        if (this.selectedSyllables.length > 0) {
-            this.selectedSyllables.pop();
-            this.updateWordDisplay();
-            this.clearMessage();
-            this.enableButtons(); // Reabilita botões ao apagar
-        }
-    }
-
-
-  // Atualiza o display da palavra formada
-  updateWordDisplay() {
-    if (this.wordDisplayElement) {
-        this.wordDisplayElement.textContent = this.selectedSyllables.join('');
+  clearFeedback() {
+    const feedback = this.gameContainer.querySelector('#game-feedback');
+    if (feedback) {
+      feedback.textContent = '';
+      feedback.className = 'feedback';
     }
   }
 
-  // Exibe uma mensagem na tela do jogo
-  showMessage(text, type = 'info') {
-    if (this.messageElement) {
-        this.messageElement.textContent = text;
-        this.messageElement.className = `message-area message-${type}`;
-        this.messageElement.style.display = 'block';
-    }
+  showError() {
+    this.gameContainer.innerHTML = `
+      <div class="game-content error-message">
+        Erro ao carregar a fase. Tente novamente.
+        <button id="back-to-levels-from-game" class="btn-back">⬅ Voltar</button>
+      </div>`;
+    this.bindBackButton(this.onBack);
   }
 
-  // Limpa a mensagem da tela
-  clearMessage() {
-    if (this.messageElement) {
-        this.messageElement.textContent = '';
-        this.messageElement.style.display = 'none';
-        this.messageElement.className = 'message-area';
-    }
-  }
-
-  // Desabilita os botões de sílaba e controle (exceto Voltar)
-  disableButtons() {
-    const buttons = this.gameContainer.querySelectorAll('.syllable-btn, #clear-button, #backspace-button');
-    buttons.forEach(button => button.disabled = true);
-  }
-
-  // Habilita os botões de sílaba e controle (exceto Voltar)
-  enableButtons() {
-     const buttons = this.gameContainer.querySelectorAll('.syllable-btn, #clear-button, #backspace-button');
-     buttons.forEach(button => button.disabled = false);
-  }
-
-  // Mostra a tela do jogo
-  show() {
-    this.gameContainer.style.display = 'block';
-  }
-
-  // Esconde a tela do jogo
-  hide() {
-    this.gameContainer.style.display = 'none';
-    this.gameContainer.innerHTML = ''; // Limpa o conteúdo ao esconder
-    this.onLevelComplete = null;
-    this.onBack = null;
-    this.currentStory = null; // Limpa a história atual
-  }
-
-  // Vincula a função de callback ao botão "Voltar"
   bindBackButton(handler) {
     this.onBack = handler;
-    // Tenta vincular o botão APÓS o innerHTML ser definido no render.
-    // O ideal é que o controller chame isso DEPOIS de chamar render.
     const backButton = this.gameContainer.querySelector('#back-to-levels-from-game');
     if (backButton && this.onBack) {
-        // Remove listener antigo para evitar duplicatas, caso render seja chamado múltiplas vezes
-        const newButton = backButton.cloneNode(true);
-        backButton.parentNode.replaceChild(newButton, backButton);
-        newButton.addEventListener('click', this.onBack);
-        console.log('Botão Voltar vinculado no GameView');
-    } else {
-         // Se o botão não existe (ex: erro no render ou chamado antes), avisa.
-         console.warn('Botão Voltar (#back-to-levels-from-game) não encontrado no GameView para vincular.');
+      // Remove listener antigo e adiciona novo
+      const newButton = backButton.cloneNode(true);
+      backButton.parentNode.replaceChild(newButton, backButton);
+      newButton.addEventListener('click', this.onBack);
     }
+  }
+
+  show() {
+    this.gameContainer.style.display = 'flex';
+  }
+
+  hide() {
+    this.gameContainer.style.display = 'none';
+    this.gameContainer.innerHTML = '';
+    this.onLevelComplete = null;
+    this.onBack = null;
+    this.currentStory = null;
+    this.currentLevel = null;
   }
 }
