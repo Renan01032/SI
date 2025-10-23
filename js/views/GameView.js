@@ -1,245 +1,229 @@
-// js/views/GameView.js
 class GameView {
   constructor() {
-    this.gameContainer = document.getElementById('game-view');
-    this.onLevelComplete = null;
-    this.onBack = null;
-    this.currentLevel = null;
-    this.currentStory = null;
-    this.selectedCells = [];
-    this.isGameComplete = false;
-
-    this.handleCellClick = this.handleCellClick.bind(this);
-    this.handleClearClick = this.handleClearClick.bind(this);
-    this.handleBackspaceClick = this.handleBackspaceClick.bind(this);
+    this.view = document.getElementById("game-view")
   }
 
-  render(levelData, onLevelCompleteCallback) {
-    this.onLevelComplete = onLevelCompleteCallback;
-    this.currentLevel = levelData;
-    
-    if (!levelData || !levelData.stories || levelData.stories.length === 0) {
-      console.error('Dados da fase inválidos:', levelData);
-      this.showError();
-      return;
-    }
-
-    // Seleciona história aleatória
-    const randomIndex = Math.floor(Math.random() * levelData.stories.length);
-    this.currentStory = levelData.stories[randomIndex];
-    this.selectedCells = [];
-    this.isGameComplete = false;
-
-    this.renderGameInterface();
-    this.bindEvents();
-  }
-
-  renderGameInterface() {
-    const grid = this.generateWordSearchGrid();
-    
-    this.gameContainer.innerHTML = `
-      <div class="game-card">
-        <div class="game-header">
-          <button id="back-to-levels-from-game" class="btn-back-header">⬅</button>
-          <h2>${this.currentLevel.name}</h2>
-        </div>
-
-        <div class="reference-image-container">
-          <img src="${this.currentStory.image}" alt="Imagem da história" class="reference-image">
-        </div>
-
-        <div class="objective-banner">
-          Encontre a palavra: <strong>${this.currentStory.word}</strong>
-        </div>
-
-        <div class="syllable-info">
-          <span class="hint-label">DICA</span>
-          <button class="hint-button">💡</button>
-        </div>
-
-        <div class="hunt-section">
-          <div class="hunt-header">CAÇA-SÍLABAS</div>
-          <div class="grid-container">
-            <div class="grid" id="word-search-grid">
-              ${grid}
+  render(levelData, onComplete) {
+    this.view.innerHTML = `
+      <div id="game-view-content">
+        <div class="game-card">
+          <div class="game-header">
+            <button id="back-to-levels-from-game" class="btn-back-header">⬅</button>
+            <h2>${levelData.title}</h2>
+          </div>
+          
+          <div class="reference-image-container">
+            <img src="${levelData.image}" alt="${levelData.title}" class="reference-image">
+          </div>
+          
+          <div class="story-section">
+            <div class="story-text">
+              <p>${levelData.story}</p>
             </div>
           </div>
+          
+          <div class="objective-banner">
+            <p>${levelData.objective}</p>
+          </div>
+          
+          <div class="syllable-info">
+            <span class="hint-label">DICA:</span>
+            <button class="hint-button" id="hint-button">❓</button>
+          </div>
+          
+          <div class="hunt-section">
+            <div class="hunt-header">Caça-Sílabas</div>
+            <div class="grid-container">
+              <div class="grid" id="game-grid"></div>
+            </div>
+          </div>
+          
+          <div id="feedback" class="feedback"></div>
         </div>
-
-        <div class="feedback" id="game-feedback"></div>
-
-        <div class="game-controls">
-          <button id="clear-button" class="btn-control btn-clear">Limpar Seleção</button>
+        
+        <div id="completion-modal" class="completion-modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>🎉 Parabéns! 🎉</h2>
+              <p class="congratulations-message">Você completou a fase com sucesso!</p>
+            </div>
+            
+            <div class="credits-earned">
+              <div class="credits-icon">💰</div>
+              <div class="credits-text">
+                <span>Você ganhou</span>
+                <div class="credits-amount" id="credits-earned-amount">50 créditos</div>
+              </div>
+            </div>
+            
+            <div class="rating-section">
+              <p>Como você avalia esta fase?</p>
+              <div class="stars-container">
+                <span class="star" data-rating="1">⭐</span>
+                <span class="star" data-rating="2">⭐</span>
+                <span class="star" data-rating="3">⭐</span>
+              </div>
+            </div>
+            
+            <button id="continue-button" class="btn-continue">Continuar</button>
+          </div>
         </div>
-      </div>
-    `;
+      </div>`
+
+    this.startSyllableHunt(levelData.syllables, () =>
+      this.showCompletionModal(levelData, onComplete),
+    )
+    this.bindHintButton(levelData.syllables)
   }
 
-  generateWordSearchGrid() {
-    const word = this.currentStory.word.toUpperCase();
-    const syllables = this.currentStory.syllables;
-    const gridSize = 8;
-    let gridHTML = '';
+  showCompletionModal(levelData, onComplete) {
+    const modal = document.getElementById("completion-modal")
+    const creditsAmount = document.getElementById("credits-earned-amount")
+    const continueButton = document.getElementById("continue-button")
+    const stars = document.querySelectorAll(".star")
 
-    // Grid simples para demonstração - em um projeto real, implementar lógica de caça-palavras
-    for (let i = 0; i < gridSize; i++) {
-      for (let j = 0; j < gridSize; j++) {
-        const randomChar = this.getRandomCharacter();
-        gridHTML += `<div class="cell" data-row="${i}" data-col="${j}">${randomChar}</div>`;
+    creditsAmount.textContent = `${levelData.reward} créditos`
+
+    let selectedRating = 0
+    stars.forEach((star) => {
+      star.addEventListener("click", () => {
+        selectedRating = Number.parseInt(star.dataset.rating)
+        this.updateStarDisplay(stars, selectedRating)
+      })
+      star.addEventListener("mouseover", () => {
+        const hoverRating = Number.parseInt(star.dataset.rating)
+        this.updateStarDisplay(stars, hoverRating, true)
+      })
+    })
+
+    const starsContainer = document.querySelector(".stars-container")
+    starsContainer.addEventListener("mouseleave", () => {
+      this.updateStarDisplay(stars, selectedRating)
+    })
+
+    continueButton.addEventListener("click", () => {
+      modal.classList.remove("show")
+      setTimeout(() => onComplete(), 300)
+    })
+
+    setTimeout(() => modal.classList.add("show"), 100)
+  }
+
+  updateStarDisplay(stars, rating, isHover = false) {
+    stars.forEach((star, index) => {
+      const starRating = index + 1
+      star.classList.remove("filled", "hover")
+      if (starRating <= rating) {
+        star.classList.add(isHover ? "hover" : "filled")
       }
-    }
-
-    // Insere a palavra horizontalmente na primeira linha
-    for (let i = 0; i < word.length && i < gridSize; i++) {
-      const cell = this.gameContainer.querySelector(`.cell[data-row="0"][data-col="${i}"]`);
-      if (cell) {
-        cell.textContent = word[i];
-        cell.dataset.letter = word[i];
-      }
-    }
-
-    return gridHTML;
-  }
-
-  getRandomCharacter() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    return chars[Math.floor(Math.random() * chars.length)];
-  }
-
-  bindEvents() {
-    const cells = this.gameContainer.querySelectorAll('.cell');
-    cells.forEach(cell => {
-      cell.addEventListener('click', () => this.handleCellClick(cell));
-    });
-
-    const clearButton = this.gameContainer.querySelector('#clear-button');
-    if (clearButton) {
-      clearButton.addEventListener('click', this.handleClearClick);
-    }
-
-    this.bindBackButton(this.onBack);
-  }
-
-  handleCellClick(cell) {
-    if (this.isGameComplete) return;
-
-    const letter = cell.textContent;
-    const row = parseInt(cell.dataset.row);
-    const col = parseInt(cell.dataset.col);
-
-    // Verifica se a célula já foi selecionada
-    const alreadySelected = this.selectedCells.some(selected => 
-      selected.row === row && selected.col === col
-    );
-
-    if (!alreadySelected) {
-      this.selectedCells.push({ row, col, letter });
-      cell.classList.add('selecionada');
-      
-      this.checkWord();
-    }
-  }
-
-  checkWord() {
-    const selectedWord = this.selectedCells.map(cell => cell.letter).join('');
-    const targetWord = this.currentStory.word.toUpperCase();
-
-    if (selectedWord === targetWord) {
-      this.isGameComplete = true;
-      this.showFeedback('Parabéns! Você encontrou a palavra!', 'vitoria');
-      this.highlightCorrectCells();
-      
-      setTimeout(() => {
-        if (this.onLevelComplete && this.currentStory) {
-          this.onLevelComplete(this.currentLevel.id, this.currentStory.reward);
-        }
-      }, 1500);
-    } else if (selectedWord.length === targetWord.length) {
-      this.showFeedback('Palavra incorreta! Tente novamente.', 'erro');
-      setTimeout(() => {
-        this.handleClearClick();
-      }, 1000);
-    }
-  }
-
-  highlightCorrectCells() {
-    const cells = this.gameContainer.querySelectorAll('.cell');
-    cells.forEach(cell => {
-      if (cell.classList.contains('selecionada')) {
-        cell.classList.add('correta');
-        cell.classList.remove('selecionada');
-      }
-    });
-  }
-
-  handleClearClick() {
-    this.selectedCells = [];
-    const cells = this.gameContainer.querySelectorAll('.cell');
-    cells.forEach(cell => {
-      cell.classList.remove('selecionada');
-    });
-    this.clearFeedback();
-  }
-
-  handleBackspaceClick() {
-    if (this.selectedCells.length > 0) {
-      const lastCell = this.selectedCells.pop();
-      const cell = this.gameContainer.querySelector(
-        `.cell[data-row="${lastCell.row}"][data-col="${lastCell.col}"]`
-      );
-      if (cell) {
-        cell.classList.remove('selecionada');
-      }
-      this.clearFeedback();
-    }
-  }
-
-  showFeedback(message, type) {
-    const feedback = this.gameContainer.querySelector('#game-feedback');
-    if (feedback) {
-      feedback.textContent = message;
-      feedback.className = `feedback ${type}`;
-    }
-  }
-
-  clearFeedback() {
-    const feedback = this.gameContainer.querySelector('#game-feedback');
-    if (feedback) {
-      feedback.textContent = '';
-      feedback.className = 'feedback';
-    }
-  }
-
-  showError() {
-    this.gameContainer.innerHTML = `
-      <div class="game-content error-message">
-        Erro ao carregar a fase. Tente novamente.
-        <button id="back-to-levels-from-game" class="btn-back">⬅ Voltar</button>
-      </div>`;
-    this.bindBackButton(this.onBack);
+    })
   }
 
   bindBackButton(handler) {
-    this.onBack = handler;
-    const backButton = this.gameContainer.querySelector('#back-to-levels-from-game');
-    if (backButton && this.onBack) {
-      // Remove listener antigo e adiciona novo
-      const newButton = backButton.cloneNode(true);
-      backButton.parentNode.replaceChild(newButton, backButton);
-      newButton.addEventListener('click', this.onBack);
+    const backButton = document.getElementById("back-to-levels-from-game")
+    if (backButton) backButton.addEventListener("click", handler)
+  }
+
+  bindHintButton(syllables) {
+    this.syllables = syllables
+    const hintButton = document.getElementById("hint-button")
+    if (hintButton) {
+      hintButton.addEventListener("click", () => {
+        const remaining = this.syllables.filter(s => !this.foundSyllables?.includes(s))
+        if (remaining.length > 0) alert(`Procure pela sílaba: ${remaining[0]}`)
+      })
     }
   }
 
-  show() {
-    this.gameContainer.style.display = 'flex';
+  startSyllableHunt(syllablesToFind, onComplete) {
+    const grid = document.getElementById("game-grid")
+    const feedback = document.getElementById("feedback")
+
+    let selectedCells = []
+    const foundSyllables = []
+    this.foundSyllables = foundSyllables
+
+    function generateGrid() {
+      grid.innerHTML = ""
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      const matrix = Array.from({ length: 8 }, () =>
+        Array.from({ length: 8 }, () => letters[Math.floor(Math.random() * letters.length)]),
+      )
+
+      syllablesToFind.forEach((syllable) => {
+        const isHorizontal = Math.random() > 0.5
+        if (isHorizontal) {
+          const row = Math.floor(Math.random() * 8)
+          const col = Math.floor(Math.random() * (8 - syllable.length))
+          for (let i = 0; i < syllable.length; i++) matrix[row][col + i] = syllable[i]
+        } else {
+          const row = Math.floor(Math.random() * (8 - syllable.length))
+          const col = Math.floor(Math.random() * 8)
+          for (let i = 0; i < syllable.length; i++) matrix[row + i][col] = syllable[i]
+        }
+      })
+
+      matrix.forEach((row) => {
+        row.forEach((letter) => {
+          const cell = document.createElement("div")
+          cell.classList.add("cell")
+          cell.textContent = letter
+          grid.appendChild(cell)
+        })
+      })
+    }
+
+    function handleSelectionEnd() {
+      if (selectedCells.length === 0) return
+
+      const word = selectedCells.map(c => c.textContent).join("")
+      if (syllablesToFind.includes(word) && !foundSyllables.includes(word)) {
+        feedback.textContent = `Você encontrou: ${word}!`
+        feedback.className = "feedback sucesso"
+        foundSyllables.push(word)
+        selectedCells.forEach(c => c.classList.add("correta"))
+
+        if (foundSyllables.length === syllablesToFind.length) {
+          feedback.textContent = "Parabéns! Fase completa!"
+          feedback.className = "feedback vitoria"
+          setTimeout(onComplete, 1500)
+        }
+      } else {
+        feedback.textContent = "Tente novamente!"
+        feedback.className = "feedback erro"
+        selectedCells.forEach(c => c.classList.remove("selecionada"))
+      }
+
+      selectedCells = []
+    }
+
+    let isSelecting = false
+    grid.addEventListener("mousedown", e => {
+      if (e.target.classList.contains("cell")) {
+        isSelecting = true
+        selectedCells.forEach(c => c.classList.remove("selecionada"))
+        selectedCells = [e.target]
+        e.target.classList.add("selecionada")
+      }
+    })
+
+    grid.addEventListener("mouseover", e => {
+      if (isSelecting && e.target.classList.contains("cell") && !selectedCells.includes(e.target)) {
+        selectedCells.push(e.target)
+        e.target.classList.add("selecionada")
+      }
+    })
+
+    document.addEventListener("mouseup", () => {
+      if (isSelecting) {
+        handleSelectionEnd()
+        isSelecting = false
+      }
+    })
+
+    generateGrid()
   }
 
-  hide() {
-    this.gameContainer.style.display = 'none';
-    this.gameContainer.innerHTML = '';
-    this.onLevelComplete = null;
-    this.onBack = null;
-    this.currentStory = null;
-    this.currentLevel = null;
-  }
+  show() { this.view.style.display = "block" }
+  hide() { this.view.style.display = "none" }
 }

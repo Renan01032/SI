@@ -1,30 +1,36 @@
-// js/app.js
-document.addEventListener('DOMContentLoaded', function() {
-  // Inicializa o modelo
-  const gameModel = new GameModel();
-  
-  // Inicializa as views
-  const homeView = new HomeView();
-  const levelSelectView = new LevelSelectView();
-  const gameView = new GameView();
-  const shopView = new ShopView();
-  
+// Aguarda o HTML da página ser completamente carregado
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. Cria uma instância do nosso Modelo de dados
+  const model = new GameModel()
+
+  // 2. Cria instâncias de todas as nossas Views
   const views = {
-    home: homeView,
-    levelSelect: levelSelectView,
-    game: gameView,
-    shop: shopView
-  };
+    home: new HomeView(),
+    levelSelect: new LevelSelectView(),
+    game: new GameView(),
+    shop: new ShopView(),
+  }
+
+  // 3. Cria o Controller primeiro
+  const controller = new GameController(model, views)
+
+  // 4. Manda o Controller iniciar o jogo
+  controller.init()
+
+  // 5. Cria o Avatar Assistente depois que tudo estiver pronto
+  const avatar = new AvatarAssistant()
   
-  // Inicializa o controller
-  const gameController = new GameController(gameModel, views);
+  // Guarda referência do avatar no controller
+  controller.avatar = avatar
   
-  // Inicializa o avatar
-  const avatar = new AvatarAssistant();
-  gameController.setAvatar(avatar);
+  // Carrega a skin atual do jogador
+  const currentSkin = model.state.currentSkin || "images/skins/default_male.png"
+  avatar.changeSkin(currentSkin)
   
-  // Inicia o jogo
-  gameController.init();
-  
-  console.log('Jogo Sílabas Mágicas iniciado!');
-});
+  // Mostra mensagem de boas-vindas
+  setTimeout(() => {
+    avatar.showRandomMessage('home')
+  }, 800)
+
+  console.log("Sílabas Mágicas iniciado!")
+})

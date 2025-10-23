@@ -1,181 +1,211 @@
-// js/controllers/GameController.js
 class GameController {
   constructor(model, views) {
-    this.model = model;
-    this.views = views;
-    this.avatar = null;
+    this.model = model
+    this.views = views // {home, levelSelect, game, shop}
+    this.avatar = null // Avatar será adicionado depois
 
-    this.showHome = this.showHome.bind(this);
-    this.showLevelSelect = this.showLevelSelect.bind(this);
-    this.showGame = this.showGame.bind(this);
-    this.showShop = this.showShop.bind(this);
-    this.handleLevelComplete = this.handleLevelComplete.bind(this);
-    this.handleBuySkin = this.handleBuySkin.bind(this);
-    this.handleEquipSkin = this.handleEquipSkin.bind(this);
+    // Garante que o 'this' dentro das funções sempre se refira ao controller
+    this.showLevelSelect = this.showLevelSelect.bind(this)
+    this.showGame = this.showGame.bind(this)
+    this.handleLevelComplete = this.handleLevelComplete.bind(this)
+    this.showShop = this.showShop.bind(this)
+    this.showHome = this.showHome.bind(this)
   }
 
+  // Inicializa o jogo
   init() {
-    this.views.home.bindPlayButton(this.showLevelSelect);
-    this.views.levelSelect.bindBackButton(this.showHome);
-    this.views.shop.bindBackButton(this.showLevelSelect);
-    this.views.levelSelect.bindShopButton(this.showShop);
+    // 1. Vincula o botão "Jogar" da HomeView para chamar a função showLevelSelect
+    this.views.home.bindPlayButton(this.showLevelSelect)
 
-    this.showHome();
+    // 2. Vincula os botões de voltar
+    this.views.shop.bindBackButton(this.showLevelSelect)
+    this.views.levelSelect.bindBackButton(this.showHome)
+    // O botão de voltar da GameView será vinculado quando a fase for renderizada
+
+    // 3. Vincula o botão da loja na seleção de fases
+    this.views.levelSelect.bindShopButton(this.showShop)
+
+    // 4. Inicia na tela inicial
+    this.showHome()
   }
 
+  // Define o background do body conforme a fase
   _setBodyBackground(levelId = null) {
-    const body = document.body;
-    body.className = '';
+    const body = document.body
+
+    body.classList.remove("default-background", "game-background", "game-background-2", "game-background-3")
 
     if (levelId === 1) {
-      body.classList.add("game-background");
+      // Fase 1: usa a imagem blur como background
+      body.classList.add("game-background")
     } else if (levelId === 2) {
-      body.classList.add("game-background-2");
+      // Fase 2: usa a imagem blur do menino e cachorro
+      body.classList.add("game-background-2")
     } else if (levelId === 3) {
-      body.classList.add("game-background-3");
+      body.classList.add("game-background-3")
     } else {
-      body.classList.add("default-background");
+      // Todas as outras telas: background padrão #333
+      body.classList.add("default-background")
     }
   }
 
+  // Atualiza a exibição de créditos em todas as telas
   _updateAllCredits() {
-    const credits = this.model.state.credits;
-    this.views.home.updateCredits(credits);
-    this.views.levelSelect.updateCredits(credits);
-    this.views.shop.updateCredits(credits);
+    const credits = this.model.state.credits
+    this.views.home.updateCredits(credits)
+    this.views.levelSelect.updateCredits(credits)
+    this.views.shop.updateCredits(credits)
   }
 
+  // Esconde todas as telas
   _hideAllViews() {
-    Object.values(this.views).forEach(view => view.hide());
-  }
-
-  setAvatar(avatarInstance) {
-    this.avatar = avatarInstance;
+    this.views.home.hide()
+    this.views.levelSelect.hide()
+    this.views.game.hide()
+    this.views.shop.hide()
   }
 
   showHome() {
-    this._hideAllViews();
-    this._updateAllCredits();
-    this._setBodyBackground();
-    this.views.home.show();
-
+    this._hideAllViews()
+    this._updateAllCredits()
+    this._setBodyBackground()
+    this.views.home.show()
+    
+    // Mensagem do avatar
     if (this.avatar) {
-      setTimeout(() => this.avatar.showRandomMessage('home'), 500);
+      setTimeout(() => {
+        this.avatar.showRandomMessage('home')
+      }, 500)
     }
   }
 
   showLevelSelect() {
-    this._hideAllViews();
-    this._updateAllCredits();
-    this._setBodyBackground();
+    this._hideAllViews()
+    this._updateAllCredits()
+    this._setBodyBackground()
 
-    this.views.levelSelect.render(
-      this.model.levels, 
-      this.model.state.unlockedLevel, 
-      this.showGame
-    );
+    // Renderiza a grade de fases com os dados mais recentes do modelo
+    this.views.levelSelect.render(this.model.levels, this.model.state.unlockedLevel, this.showGame)
 
-    this.views.levelSelect.show();
-
+    this.views.levelSelect.show()
+    
+    // Mensagem do avatar
     if (this.avatar) {
-      setTimeout(() => this.avatar.showRandomMessage('levelSelect'), 500);
+      setTimeout(() => {
+        this.avatar.showRandomMessage('levelSelect')
+      }, 500)
     }
   }
 
   showGame(levelId) {
-    const levelData = this.model.getLevelData(levelId);
-    if (!levelData) {
-      console.error(`Nível ${levelId} não encontrado.`);
-      this.showLevelSelect();
-      return;
-    }
+    const levelData = this.model.getLevelData(levelId)
+    if (!levelData) return
 
-    this._hideAllViews();
-    this._setBodyBackground(levelId);
+    this._hideAllViews()
+    this._setBodyBackground(levelId)
 
-    // CORREÇÃO: Passar callback corretamente
-    this.views.game.render(levelData, this.handleLevelComplete);
-    this.views.game.bindBackButton(this.showLevelSelect);
-    this.views.game.show();
-
+    // Renderiza a tela do jogo
+    this.views.game.render(levelData, () => this.handleLevelComplete(levelId))
+    this.views.game.bindBackButton(this.showLevelSelect)
+    this.views.game.show()
+    
+    // Mensagem do avatar
     if (this.avatar) {
-      setTimeout(() => this.avatar.showRandomMessage('gameStart'), 500);
+      setTimeout(() => {
+        this.avatar.showRandomMessage('gameStart')
+      }, 500)
     }
   }
 
   showShop() {
-    this._hideAllViews();
-    this._updateAllCredits();
-    this._setBodyBackground();
-
-    const availableSkins = Object.values(this.model.getAvailableSkins());
-    const ownedSkins = this.model.state.ownedSkins;
-    const currentSkin = this.model.state.currentSkin;
-
+    console.log("Abrindo loja...")
+    this._hideAllViews()
+    this._updateAllCredits()
+    this._setBodyBackground()
+    
+    // Renderiza a loja com as skins disponíveis
+    const availableSkins = this.model.getAvailableSkins()
+    const ownedSkins = this.model.state.ownedSkins
+    const currentSkin = this.model.state.currentSkin
+    
+    console.log("Skins disponíveis:", availableSkins)
+    console.log("Skins possuídas:", ownedSkins)
+    console.log("Skin atual:", currentSkin)
+    
     this.views.shop.render(
       availableSkins,
       ownedSkins,
       currentSkin,
-      this.handleBuySkin,
-      this.handleEquipSkin
-    );
-
-    this.views.shop.show();
-
+      (skinId) => this.handleBuySkin(skinId),
+      (skinId) => this.handleEquipSkin(skinId)
+    )
+    
+    this.views.shop.show()
+    console.log("Loja exibida!")
+    
+    // Mensagem do avatar
     if (this.avatar) {
-      setTimeout(() => this.avatar.showRandomMessage('shop'), 500);
+      setTimeout(() => {
+        this.avatar.showRandomMessage('shop')
+      }, 500)
     }
-  }
-
-  handleLevelComplete(levelId, reward) {
-    console.log(`Fase ${levelId} completa! Recompensa: ${reward}`);
-    this.model.completeLevel(levelId, reward);
-
-    if (this.avatar) {
-      this.avatar.celebrate();
-      this.avatar.showRandomMessage('gameComplete');
-    }
-
-    setTimeout(() => {
-      this.showLevelSelect();
-    }, 1500);
   }
 
   handleBuySkin(skinId) {
-    const result = this.model.buySkin(skinId);
-
+    const result = this.model.buySkin(skinId)
+    
     if (result.success) {
-      this.views.shop.showMessage(result.message, "success");
-      this._updateAllCredits();
-
+      this.views.shop.showMessage(result.message, "success")
+      this._updateAllCredits()
+      
+      // Re-renderiza a loja
       setTimeout(() => {
-        this.showShop();
-      }, 1000);
-
+        this.showShop()
+      }, 1000)
+      
+      // Celebra com o avatar
       if (this.avatar) {
-        this.avatar.celebrate();
+        this.avatar.celebrate()
       }
     } else {
-      this.views.shop.showMessage(result.message, "error");
+      this.views.shop.showMessage(result.message, "error")
     }
   }
 
   handleEquipSkin(skinId) {
-    const result = this.model.equipSkin(skinId);
-
+    const result = this.model.equipSkin(skinId)
+    
     if (result.success) {
-      this.views.shop.showMessage(result.message, "success");
-
+      this.views.shop.showMessage(result.message, "success")
+      
+      // Atualiza a skin do avatar
       if (this.avatar && result.skinPath) {
-        this.avatar.changeSkin(result.skinPath);
-        this.avatar.celebrate();
+        this.avatar.changeSkin(result.skinPath)
+        this.avatar.celebrate()
       }
-
+      
+      // Re-renderiza a loja
       setTimeout(() => {
-        this.showShop();
-      }, 800);
+        this.showShop()
+      }, 800)
     } else {
-      this.views.shop.showMessage(result.message, "error");
+      this.views.shop.showMessage(result.message, "error")
     }
+  }
+
+  handleLevelComplete(levelId) {
+    console.log(`Fase ${levelId} completa!`)
+    this.model.completeLevel(levelId)
+    
+    // Celebração do avatar
+    if (this.avatar) {
+      this.avatar.celebrate()
+      this.avatar.showRandomMessage('gameComplete')
+    }
+    
+    // Aguarda um pouco antes de voltar
+    setTimeout(() => {
+      this.showLevelSelect()
+    }, 1500)
   }
 }
