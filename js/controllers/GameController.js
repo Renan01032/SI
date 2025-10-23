@@ -30,24 +30,35 @@ class GameController {
   }
 
   // Define o background do body conforme a fase
-  _setBodyBackground(levelId = null) {
-    const body = document.body
+ _setBodyBackground(levelId = null) {
+  const body = document.body
 
-    body.classList.remove("default-background", "game-background", "game-background-2", "game-background-3")
+  body.classList.remove(
+    "default-background",
+    "game-background",
+    "game-background-2",
+    "game-background-3",
+    "game-background-4"
+  )
 
-    if (levelId === 1) {
-      // Fase 1: usa a imagem blur como background
-      body.classList.add("game-background")
-    } else if (levelId === 2) {
-      // Fase 2: usa a imagem blur do menino e cachorro
-      body.classList.add("game-background-2")
-    } else if (levelId === 3) {
-      body.classList.add("game-background-3")
-    } else {
-      // Todas as outras telas: background padrão #333
-      body.classList.add("default-background")
-    }
+  if (levelId === 1) {
+    // Fase 1: usa a imagem blur como background
+    body.classList.add("game-background")
+  } else if (levelId === 2) {
+    // Fase 2: usa a imagem blur do menino e cachorro
+    body.classList.add("game-background-2")
+  } else if (levelId === 3) {
+    // Fase 3: usa a imagem blur da bola da alegria
+    body.classList.add("game-background-3")
+  } else if (levelId === 4) {
+    // Fase 4: usa a imagem blur da princesa feliz
+    body.classList.add("game-background-4")
+  } else {
+    // Todas as outras telas: background padrão #333
+    body.classList.add("default-background")
   }
+}
+
 
   // Atualiza a exibição de créditos em todas as telas
   _updateAllCredits() {
