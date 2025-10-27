@@ -125,8 +125,8 @@ class GameModel {
                         A boneca parecia sorrir de alegria.`,
         objective: "Encontre a sílaba <strong>BO</strong> para completar a história!",
         syllables: ["BO"],
-        reward: 100,
-        rewardSkin: "avatar_fada" 
+        reward: 50,
+        rewardSkin: "avatar_fada" // Fada Mágica
       },
       {
         id: 2,
@@ -139,8 +139,8 @@ class GameModel {
                         No fim, os dois voltaram felizes para ca<span class="lacuna" data-silaba="SA">__</span>.`,
         objective: "Encontre as sílabas <strong>NI</strong> e <strong>SA</strong> para completar a história!",
         syllables: ["NI", "SA"],
-        reward: 200,
-        rewardSkin: "avatar_pirata" 
+        reward: 75,
+        rewardSkin: "avatar_pirata" // Pirata
       },
       {
         id: 3,
@@ -155,24 +155,9 @@ class GameModel {
         objective:
           "Encontre as sílabas <strong>LA</strong>, <strong>CA</strong> e <strong>TI</strong> para completar a história!",
         syllables: ["LA", "CA", "TI"],
-        reward: 300,
-        rewardSkin: "avatar_mago" 
+        reward: 100,
+        rewardSkin: "avatar_mago" // Mago
       },
-      {
-        id: 4,
-        title: "A Princesa Feliz",
-        image: "images/imagens/princesa_feliz.png",
-        story: `Era uma vez uma prin<span class="lacuna" data-silaba="CE">__</span>sa que morava em um castelo.<br>
-          Ela tinha um lindo vestido <span class="lacuna" data-silaba="RO">__</span>sa.<br>
-          No jar<span class="lacuna" data-silaba="DIM">__</span>, brincava com sua boneca.<br>
-          Ela corria entre as flores e ria sem parar.<br>
-          O sol bri<span class="lacuna" data-silaba="LHA">__</span>va forte no céu.<br>
-          E todos ficaram felizes no castelo.`,
-        objective: "Encontre as sílabas <strong>CE</strong>, <strong>RO</strong>, <strong>DIM</strong> e <strong>LHA</strong> para completar a história!",
-        syllables: ["CE", "RO", "DIM", "LHA"],
-        reward: 400,
-        rewardSkin: "avatar_rainha" 
-      }
     ]
   }
 
@@ -195,6 +180,38 @@ class GameModel {
   // Salva o progresso
   saveState() {
     localStorage.setItem("silabasMagicasState", JSON.stringify(this.state))
+    
+    // Sincroniza com o servidor se o usuário estiver logado
+    this.syncWithServer()
+  }
+
+  // Sincroniza o progresso com o servidor
+  async syncWithServer() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    
+    if (!currentUser || !currentUser.id) {
+      return // Usuário não está logado
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3000/usuarios/salvar-progresso/${currentUser.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          gameState: this.state
+        })
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        console.log('Progresso salvo no servidor!')
+      }
+    } catch (error) {
+      console.error('Erro ao sincronizar com servidor:', error)
+    }
   }
 
   // Adiciona créditos ao jogador
@@ -236,23 +253,21 @@ class GameModel {
   unlockLevelRewardSkin(levelId) {
     // Define qual skin é desbloqueada em cada fase
     const rewardSkins = {
-      1: "avatar_fada",     // Fase 1 -> Fada Mágica
-      2: "avatar_pirata",   // Fase 2 -> Pirata
-      3: "avatar_mago",     // Fase 3 -> Mago
-      4: "avatar_rainha"    // Fase 4 -> Rainha
+      1: "avatar_fada",           // Fase 1 -> Fada Mágica
+      2: "avatar_pirata",         // Fase 2 -> Pirata
+      3: "avatar_mago"            // Fase 3 -> Mago
     }
-
+    
     const rewardSkinId = rewardSkins[levelId]
-
+    
     if (rewardSkinId && !this.hasSkin(rewardSkinId)) {
       this.state.ownedSkins.push(rewardSkinId)
       this.saveState()
       return rewardSkinId
     }
-
+    
     return null
   }
-
 
   // Verifica se o jogador possui uma skin
   hasSkin(skinId) {
