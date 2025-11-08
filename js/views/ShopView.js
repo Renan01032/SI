@@ -38,10 +38,20 @@ class ShopView {
       if (isEquipped) skinCard.classList.add("equipped")
       if (isLocked) skinCard.classList.add("locked")
 
+      const rarityClass = `rarity-${skin.rarity || "comum"}`
+      skinCard.classList.add(rarityClass)
+
+      // Tradução de raridade para português
+      const rarityNames = {
+        comum: "Comum",
+        rara: "Rara",
+        lendária: "Lendária",
+      }
+
       skinCard.innerHTML = `
         <div class="skin-image-container">
           <img src="${skin.image}" alt="${skin.name}" class="skin-image">
-          ${isEquipped ? '<div class="equipped-badge">EQUIPADO</div>' : ""}
+          <div class="rarity-badge ${rarityClass}">${rarityNames[skin.rarity] || "Comum"}</div>
           ${isLocked ? '<div class="locked-overlay">🔒</div>' : ""}
         </div>
         <div class="skin-info">

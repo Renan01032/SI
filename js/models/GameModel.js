@@ -22,6 +22,7 @@ class GameModel {
         price: 0,
         unlockLevel: 0,
         isDefault: true,
+        rarity: "comum",
       },
       {
         id: "default_female",
@@ -30,23 +31,7 @@ class GameModel {
         price: 0,
         unlockLevel: 0,
         isDefault: true,
-      },
-      // Skins desbloqueáveis por fase
-      {
-        id: "avatar_fada",
-        name: "Fada Mágica",
-        image: "images/skins/avatar_fada.png",
-        price: 100,
-        unlockLevel: 1,
-        isDefault: false,
-      },
-      {
-        id: "avatar_pirata",
-        name: "Pirata",
-        image: "images/skins/avatar_pirata.png",
-        price: 150,
-        unlockLevel: 2,
-        isDefault: false,
+        rarity: "comum",
       },
       {
         id: "avatar_princesa",
@@ -55,22 +40,7 @@ class GameModel {
         price: 150,
         unlockLevel: 2,
         isDefault: false,
-      },
-      {
-        id: "avatar_cavaleiro_cosmico",
-        name: "Cavaleiro Cósmico",
-        image: "images/skins/avatar_cavaleiro_cosmico.png",
-        price: 200,
-        unlockLevel: 3,
-        isDefault: false,
-      },
-      {
-        id: "avatar_mago",
-        name: "Mago",
-        image: "images/skins/avatar_mago.png",
-        price: 200,
-        unlockLevel: 3,
-        isDefault: false,
+        rarity: "comum",
       },
       {
         id: "avatar_rainha",
@@ -79,6 +49,7 @@ class GameModel {
         price: 250,
         unlockLevel: 4,
         isDefault: false,
+        rarity: "rara",
       },
       {
         id: "avatar_rei",
@@ -87,7 +58,45 @@ class GameModel {
         price: 250,
         unlockLevel: 4,
         isDefault: false,
+        rarity: "rara",
+      },     
+      {
+        id: "avatar_fada",
+        name: "Fada Mágica",
+        image: "images/skins/avatar_fada.png",
+        price: 100,
+        unlockLevel: 1,
+        isDefault: false,
+        rarity: "rara",
       },
+      {
+        id: "avatar_mago",
+        name: "Mago",
+        image: "images/skins/avatar_mago.png",
+        price: 200,
+        unlockLevel: 3,
+        isDefault: false,
+        rarity: "rara",
+      },
+      {
+        id: "avatar_pirata",
+        name: "Pirata",
+        image: "images/skins/avatar_pirata.png",
+        price: 150,
+        unlockLevel: 2,
+        isDefault: false,
+        rarity: "rara",
+      },
+      {
+        id: "avatar_cavaleiro_cosmico",
+        name: "Cavaleiro Cósmico",
+        image: "images/skins/avatar_cavaleiro_cosmico.png",
+        price: 200,
+        unlockLevel: 3,
+        isDefault: false,
+        rarity: "lendária",
+      },
+
       {
         id: "avatar_fada_celestial",
         name: "Fada Celestial",
@@ -95,6 +104,7 @@ class GameModel {
         price: 300,
         unlockLevel: 5,
         isDefault: false,
+        rarity: "lendária",
       },
       {
         id: "avatar_dragao",
@@ -103,6 +113,7 @@ class GameModel {
         price: 350,
         unlockLevel: 5,
         isDefault: false,
+        rarity: "lendária",
       },
       {
         id: "avatar_guerreiro_elemental",
@@ -111,6 +122,7 @@ class GameModel {
         price: 400,
         unlockLevel: 5,
         isDefault: false,
+        rarity: "lendária",
       },
     ]
 
@@ -360,7 +372,7 @@ class GameModel {
 
   // Retorna skins disponíveis para o jogador
   getAvailableSkins() {
-    return this.skins.filter((skin) => skin.isDefault || this.state.unlockedLevel >= skin.unlockLevel)
+    return this.skins
   }
 
   // Retorna informações de uma skin
