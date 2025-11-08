@@ -5,6 +5,11 @@ class GameView {
     this.errorSound = new Audio("audios/erro.mp3")
     this.successSound.volume = 0.7
     this.errorSound.volume = 0.7
+    this.model = null
+  }
+
+  setModel(model) {
+    this.model = model
   }
 
   render(levelData, onComplete) {
@@ -45,6 +50,16 @@ class GameView {
           <div id="feedback" class="feedback"></div>
         </div>
         
+        <!-- Adicionando botões de controle de áudio -->
+        <div class="audio-controls">
+          <button id="music-toggle" class="audio-control-btn">
+            🎵
+          </button>
+          <button id="sound-toggle" class="audio-control-btn">
+            ${this.model?.state.soundEffectsEnabled ? "🔊" : "🔇"} 
+          </button>
+        </div>
+        
         <div id="completion-modal" class="completion-modal">
           <div class="modal-content">
             <div class="modal-header">
@@ -76,6 +91,7 @@ class GameView {
 
     this.startSyllableHunt(levelData.syllables, () => this.showCompletionModal(levelData, onComplete))
     this.bindHintButton(levelData.syllables)
+    this.bindAudioControls()
   }
 
   showCompletionModal(levelData, onComplete) {
@@ -213,8 +229,10 @@ class GameView {
       const word = selectedCells.map((c) => c.textContent).join("")
       if (syllablesToFind.includes(word) && !foundSyllables.includes(word)) {
         // Acerto
-        this.successSound.currentTime = 0
-        this.successSound.play().catch(() => {})
+        if (this.model?.state.soundEffectsEnabled) {
+          this.successSound.currentTime = 0
+          this.successSound.play().catch(() => {})
+        }
 
         feedback.textContent = `Você encontrou: ${word}!`
         feedback.className = "feedback sucesso"
@@ -228,8 +246,10 @@ class GameView {
         }
       } else {
         // Erro
-        this.errorSound.currentTime = 0
-        this.errorSound.play().catch(() => {})
+        if (this.model?.state.soundEffectsEnabled) {
+          this.errorSound.currentTime = 0
+          this.errorSound.play().catch(() => {})
+        }
 
         feedback.textContent = "Tente novamente!"
         feedback.className = "feedback erro"
@@ -270,6 +290,25 @@ class GameView {
   }
   hide() {
     this.view.style.display = "none"
+  }
+
+  bindAudioControls() {
+    const musicToggle = document.getElementById("music-toggle")
+    const soundToggle = document.getElementById("sound-toggle")
+
+    if (musicToggle) {
+      musicToggle.addEventListener("click", () => {
+        const enabled = this.model.toggleMusic()
+        musicToggle.textContent = `${enabled ? "🎵 " : "🔇"}`
+      })
+    }
+
+    if (soundToggle) {
+      soundToggle.addEventListener("click", () => {
+        const enabled = this.model.toggleSoundEffects()
+        soundToggle.textContent = `${enabled ? "🔊" : "🔇"}`
+      })
+    }
   }
 }
 

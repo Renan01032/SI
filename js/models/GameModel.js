@@ -6,6 +6,8 @@ class GameModel {
       unlockedLevel: 1,
       currentSkin: "images/skins/default_male.png",
       ownedSkins: ["default_male", "default_female"],
+      musicEnabled: true,
+      soundEffectsEnabled: true,
     }
     // Carrega o estado do jogo ou usa o padrão
     this.state = this.loadState()
@@ -192,6 +194,10 @@ class GameModel {
         rewardSkin: "avatar_fada_celestial",
       },
     ]
+
+    this.backgroundMusic = new Audio("audios/musica/musicaFundo.mp3")
+    this.backgroundMusic.loop = true
+    this.backgroundMusic.volume = 0.4
   }
 
   // Carrega o progresso do jogador
@@ -205,6 +211,8 @@ class GameModel {
         unlockedLevel: parsed.unlockedLevel || 1,
         currentSkin: parsed.currentSkin || "images/skins/default_male.png",
         ownedSkins: parsed.ownedSkins || ["default_male", "default_female"],
+        musicEnabled: parsed.musicEnabled !== undefined ? parsed.musicEnabled : true,
+        soundEffectsEnabled: parsed.soundEffectsEnabled !== undefined ? parsed.soundEffectsEnabled : true,
       }
     }
     return this.defaultState
@@ -358,6 +366,34 @@ class GameModel {
   // Retorna informações de uma skin
   getSkinInfo(skinId) {
     return this.skins.find((s) => s.id === skinId)
+  }
+
+  playBackgroundMusic() {
+    if (this.state.musicEnabled) {
+      this.backgroundMusic.play().catch((e) => console.log("Erro ao tocar música:", e))
+    }
+  }
+
+  stopBackgroundMusic() {
+    this.backgroundMusic.pause()
+    this.backgroundMusic.currentTime = 0
+  }
+
+  toggleMusic() {
+    this.state.musicEnabled = !this.state.musicEnabled
+    if (this.state.musicEnabled) {
+      this.playBackgroundMusic()
+    } else {
+      this.stopBackgroundMusic()
+    }
+    this.saveState()
+    return this.state.musicEnabled
+  }
+
+  toggleSoundEffects() {
+    this.state.soundEffectsEnabled = !this.state.soundEffectsEnabled
+    this.saveState()
+    return this.state.soundEffectsEnabled
   }
 }
 

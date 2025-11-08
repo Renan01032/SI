@@ -211,6 +211,47 @@ body.game-background-3::before {
   background: #8e44ad;
 }
 
+/* Estilos para os botões de controle de audio */
+.audio-controls {
+  position: fixed;
+  top: 60px;
+  right: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+/* Botões agora são menores e mostram apenas emojis */
+.audio-control-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.audio-control-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #764ba2, #667eea);
+}
+
+.audio-control-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 /* --- DISPLAY DE CRÉDITOS --- */
 .credits-display {
   position: absolute;
