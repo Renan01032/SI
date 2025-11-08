@@ -39,6 +39,7 @@ class GameController {
       "game-background-2",
       "game-background-3",
       "game-background-4",
+      "game-background-5",
     )
 
     if (levelId === 1) {
@@ -53,6 +54,9 @@ class GameController {
     } else if (levelId === 4) {
       // Fase 4: usa a imagem blur da princesa feliz
       body.classList.add("game-background-4")
+    } else if (levelId === 5) {
+      // Fase 5: usa a imagem blur da nova skin
+      body.classList.add("game-background-5")
     } else {
       // Todas as outras telas: background padrão #333
       body.classList.add("default-background")
@@ -219,3 +223,5 @@ class GameController {
     }, 1500)
   }
 }
+
+window.GameController = GameController

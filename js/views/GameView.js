@@ -137,135 +137,133 @@ class GameView {
     }
   }
 
- startSyllableHunt(syllablesToFind, onComplete) {
-  const grid = document.getElementById("game-grid")
-  const feedback = document.getElementById("feedback")
-  const size = 8
+  startSyllableHunt(syllablesToFind, onComplete) {
+    const grid = document.getElementById("game-grid")
+    const feedback = document.getElementById("feedback")
+    const size = 8
 
-  let selectedCells = []
-  const foundSyllables = []
-  this.foundSyllables = foundSyllables
+    let selectedCells = []
+    const foundSyllables = []
+    this.foundSyllables = foundSyllables
 
-  // Função para criar a matriz inicial
-  const matrix = Array.from({ length: size }, () =>
-    Array.from({ length: size }, () => null)
-  )
+    // Função para criar a matriz inicial
+    const matrix = Array.from({ length: size }, () => Array.from({ length: size }, () => null))
 
-  // Insere sílaba obrigatória de forma segura
-  const insertSyllable = (syllable) => {
-    let placed = false
-    let attempts = 0
+    // Insere sílaba obrigatória de forma segura
+    const insertSyllable = (syllable) => {
+      let placed = false
+      let attempts = 0
 
-    while (!placed && attempts < 100) {
-      const isHorizontal = Math.random() > 0.5
-      const row = Math.floor(Math.random() * (isHorizontal ? size : size - syllable.length))
-      const col = Math.floor(Math.random() * (isHorizontal ? size - syllable.length : size))
+      while (!placed && attempts < 100) {
+        const isHorizontal = Math.random() > 0.5
+        const row = Math.floor(Math.random() * (isHorizontal ? size : size - syllable.length))
+        const col = Math.floor(Math.random() * (isHorizontal ? size - syllable.length : size))
 
-      let canPlace = true
-      for (let i = 0; i < syllable.length; i++) {
-        const r = isHorizontal ? row : row + i
-        const c = isHorizontal ? col + i : col
-        if (matrix[r][c] !== null) {
-          canPlace = false
-          break
-        }
-      }
-
-      if (canPlace) {
+        let canPlace = true
         for (let i = 0; i < syllable.length; i++) {
           const r = isHorizontal ? row : row + i
           const c = isHorizontal ? col + i : col
-          matrix[r][c] = syllable[i]
+          if (matrix[r][c] !== null) {
+            canPlace = false
+            break
+          }
         }
-        placed = true
+
+        if (canPlace) {
+          for (let i = 0; i < syllable.length; i++) {
+            const r = isHorizontal ? row : row + i
+            const c = isHorizontal ? col + i : col
+            matrix[r][c] = syllable[i]
+          }
+          placed = true
+        }
+
+        attempts++
       }
 
-      attempts++
+      if (!placed) console.warn(`Não foi possível posicionar a sílaba: ${syllable}`)
     }
 
-    if (!placed) console.warn(`Não foi possível posicionar a sílaba: ${syllable}`)
-  }
+    // Inserir todas as sílabas obrigatórias
+    syllablesToFind.forEach(insertSyllable)
 
-  // Inserir todas as sílabas obrigatórias
-  syllablesToFind.forEach(insertSyllable)
-
-  // Preencher espaços vazios com letras aleatórias
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
-      if (!matrix[r][c]) matrix[r][c] = letters[Math.floor(Math.random() * letters.length)]
+    // Preencher espaços vazios com letras aleatórias
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (!matrix[r][c]) matrix[r][c] = letters[Math.floor(Math.random() * letters.length)]
+      }
     }
-  }
 
-  // Renderiza grid
-  grid.innerHTML = ""
-  matrix.forEach((row) => {
-    row.forEach((letter) => {
-      const cell = document.createElement("div")
-      cell.classList.add("cell")
-      cell.textContent = letter
-      grid.appendChild(cell)
+    // Renderiza grid
+    grid.innerHTML = ""
+    matrix.forEach((row) => {
+      row.forEach((letter) => {
+        const cell = document.createElement("div")
+        cell.classList.add("cell")
+        cell.textContent = letter
+        grid.appendChild(cell)
+      })
     })
-  })
 
-  // Função para lidar com seleção de sílabas
-  const handleSelectionEnd = () => {
-    if (selectedCells.length === 0) return
+    // Função para lidar com seleção de sílabas
+    const handleSelectionEnd = () => {
+      if (selectedCells.length === 0) return
 
-    const word = selectedCells.map((c) => c.textContent).join("")
-    if (syllablesToFind.includes(word) && !foundSyllables.includes(word)) {
-      // Acerto
-      this.successSound.currentTime = 0
-      this.successSound.play().catch(() => {})
+      const word = selectedCells.map((c) => c.textContent).join("")
+      if (syllablesToFind.includes(word) && !foundSyllables.includes(word)) {
+        // Acerto
+        this.successSound.currentTime = 0
+        this.successSound.play().catch(() => {})
 
-      feedback.textContent = `Você encontrou: ${word}!`
-      feedback.className = "feedback sucesso"
-      foundSyllables.push(word)
-      selectedCells.forEach((c) => c.classList.add("correta"))
+        feedback.textContent = `Você encontrou: ${word}!`
+        feedback.className = "feedback sucesso"
+        foundSyllables.push(word)
+        selectedCells.forEach((c) => c.classList.add("correta"))
 
-      if (foundSyllables.length === syllablesToFind.length) {
-        feedback.textContent = "Parabéns! Fase completa!"
-        feedback.className = "feedback vitoria"
-        setTimeout(onComplete, 1500)
+        if (foundSyllables.length === syllablesToFind.length) {
+          feedback.textContent = "Parabéns! Fase completa!"
+          feedback.className = "feedback vitoria"
+          setTimeout(onComplete, 1500)
+        }
+      } else {
+        // Erro
+        this.errorSound.currentTime = 0
+        this.errorSound.play().catch(() => {})
+
+        feedback.textContent = "Tente novamente!"
+        feedback.className = "feedback erro"
+        selectedCells.forEach((c) => c.classList.remove("selecionada"))
       }
-    } else {
-      // Erro
-      this.errorSound.currentTime = 0
-      this.errorSound.play().catch(() => {})
 
-      feedback.textContent = "Tente novamente!"
-      feedback.className = "feedback erro"
-      selectedCells.forEach((c) => c.classList.remove("selecionada"))
+      selectedCells = []
     }
 
-    selectedCells = []
+    // Eventos de seleção
+    let isSelecting = false
+    grid.addEventListener("mousedown", (e) => {
+      if (e.target.classList.contains("cell")) {
+        isSelecting = true
+        selectedCells.forEach((c) => c.classList.remove("selecionada"))
+        selectedCells = [e.target]
+        e.target.classList.add("selecionada")
+      }
+    })
+
+    grid.addEventListener("mouseover", (e) => {
+      if (isSelecting && e.target.classList.contains("cell") && !selectedCells.includes(e.target)) {
+        selectedCells.push(e.target)
+        e.target.classList.add("selecionada")
+      }
+    })
+
+    document.addEventListener("mouseup", () => {
+      if (isSelecting) {
+        handleSelectionEnd()
+        isSelecting = false
+      }
+    })
   }
-
-  // Eventos de seleção
-  let isSelecting = false
-  grid.addEventListener("mousedown", (e) => {
-    if (e.target.classList.contains("cell")) {
-      isSelecting = true
-      selectedCells.forEach((c) => c.classList.remove("selecionada"))
-      selectedCells = [e.target]
-      e.target.classList.add("selecionada")
-    }
-  })
-
-  grid.addEventListener("mouseover", (e) => {
-    if (isSelecting && e.target.classList.contains("cell") && !selectedCells.includes(e.target)) {
-      selectedCells.push(e.target)
-      e.target.classList.add("selecionada")
-    }
-  })
-
-  document.addEventListener("mouseup", () => {
-    if (isSelecting) {
-      handleSelectionEnd()
-      isSelecting = false
-    }
-  })
-}
 
   show() {
     this.view.style.display = "block"
@@ -274,3 +272,5 @@ class GameView {
     this.view.style.display = "none"
   }
 }
+
+window.GameView = GameView

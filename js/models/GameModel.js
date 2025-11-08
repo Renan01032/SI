@@ -126,7 +126,7 @@ class GameModel {
         objective: "Encontre a sílaba <strong>BO</strong> para completar a história!",
         syllables: ["BO"],
         reward: 100,
-        rewardSkin: "avatar_fada", // Fada Mágica
+        rewardSkin: "avatar_fada",
       },
       {
         id: 2,
@@ -140,7 +140,7 @@ class GameModel {
         objective: "Encontre as sílabas <strong>NI</strong> e <strong>SA</strong> para completar a história!",
         syllables: ["NI", "SA"],
         reward: 200,
-        rewardSkin: "avatar_pirata", // Pirata
+        rewardSkin: "avatar_pirata",
       },
       {
         id: 3,
@@ -156,7 +156,7 @@ class GameModel {
           "Encontre as sílabas <strong>LA</strong>, <strong>CA</strong> e <strong>TI</strong> para completar a história!",
         syllables: ["LA", "CA", "TI"],
         reward: 300,
-        rewardSkin: "avatar_mago", // Mago
+        rewardSkin: "avatar_mago",
       },
       {
         id: 4,
@@ -172,7 +172,24 @@ class GameModel {
           "Encontre as sílabas <strong>CE</strong>, <strong>RO</strong>, <strong>DIM</strong> e <strong>LHA</strong> para completar a história!",
         syllables: ["CE", "RO", "DIM", "LHA"],
         reward: 400,
-        rewardSkin: "avatar_rainha", // Rainha
+        rewardSkin: "avatar_rainha",
+      },
+      {
+        id: 5,
+        title: "A Aventura do Dinossauro",
+        image: "images/imagens/dinossauro.png",
+        story: `Um <span class="lacuna" data-silaba="DI">__</span>nossauro verde andava pelo campo.<br>
+                        Ele viu uma árvo<span class="lacuna" data-silaba="RE">__</span> cheia de frutas.<br>
+                        Pegou uma fruta e comeu devagar.<br>
+                        Depois encontrou um rio <span class="lacuna" data-silaba="BRI">___</span>lhando ao sol.<br>
+                        Be<span class="lacuna" data-silaba="BEU">___</span> da água e ficou refrescado.<br>
+                        Um pássa<span class="lacuna" data-silaba="RO">__</span> passou voando no céu.<br>
+                        O dinossauro sorriu e acenou feliz.`,
+        objective:
+          "Encontre as sílabas <strong>DI</strong>, <strong>RE</strong>, <strong>BRI</strong>, <strong>BEU</strong> e <strong>RO</strong> para completar a história!",
+        syllables: ["DI", "RE", "BRI", "BEU", "RO"],
+        reward: 500,
+        rewardSkin: "avatar_fada_celestial",
       },
     ]
   }
@@ -267,12 +284,12 @@ class GameModel {
 
   // Desbloqueia a skin de recompensa da fase
   unlockLevelRewardSkin(levelId) {
-    // Define qual skin é desbloqueada em cada fase
     const rewardSkins = {
-      1: "avatar_fada", // Fase 1 -> Fada Mágica
-      2: "avatar_pirata", // Fase 2 -> Pirata
-      3: "avatar_mago", // Fase 3 -> Mago
-      4: "avatar_rainha", // Fase 4 -> Rainha
+      1: "avatar_fada",
+      2: "avatar_pirata",
+      3: "avatar_mago",
+      4: "avatar_rainha",
+      5: "avatar_fada_celestial",
     }
 
     const rewardSkinId = rewardSkins[levelId]
@@ -343,3 +360,5 @@ class GameModel {
     return this.skins.find((s) => s.id === skinId)
   }
 }
+
+window.GameModel = GameModel

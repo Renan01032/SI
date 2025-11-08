@@ -23,3 +23,5 @@ class HomeView {
     this.view.style.display = "none"
   }
 }
+
+window.HomeView = HomeView
