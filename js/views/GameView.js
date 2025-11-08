@@ -84,7 +84,15 @@ class GameView {
               </div>
             </div>
             
-            <button id="continue-button" class="btn-continue">Continuar</button>
+            <!-- Adicionado botão de reiniciar fase -->
+            <div class="modal-actions">
+              <button id="restart-level-button" class="btn-restart" title="Reiniciar Fase">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
+              </button>
+              <button id="continue-button" class="btn-continue">Continuar</button>
+            </div>
           </div>
         </div>
       </div>`
@@ -98,6 +106,7 @@ class GameView {
     const modal = document.getElementById("completion-modal")
     const creditsAmount = document.getElementById("credits-earned-amount")
     const continueButton = document.getElementById("continue-button")
+    const restartButton = document.getElementById("restart-level-button")
     const stars = document.querySelectorAll(".star")
 
     creditsAmount.textContent = `${levelData.reward} créditos`
@@ -117,6 +126,14 @@ class GameView {
     const starsContainer = document.querySelector(".stars-container")
     starsContainer.addEventListener("mouseleave", () => {
       this.updateStarDisplay(stars, selectedRating)
+    })
+
+    restartButton.addEventListener("click", () => {
+      modal.classList.remove("show")
+      setTimeout(() => {
+        // Recarrega a mesma fase
+        this.render(levelData, onComplete)
+      }, 300)
     })
 
     continueButton.addEventListener("click", () => {

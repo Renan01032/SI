@@ -52,11 +52,9 @@ class ShopView {
         <div class="skin-image-container">
           <img src="${skin.image}" alt="${skin.name}" class="skin-image">
           <div class="rarity-badge ${rarityClass}">${rarityNames[skin.rarity] || "Comum"}</div>
-          ${isLocked ? '<div class="locked-overlay">🔒</div>' : ""}
         </div>
         <div class="skin-info">
           <h3 class="skin-name">${skin.name}</h3>
-          ${skin.unlockLevel > 0 ? `<p class="skin-unlock">Fase ${skin.unlockLevel}+</p>` : ""}
         </div>
         <div class="skin-action">
           ${
@@ -69,6 +67,7 @@ class ShopView {
                   : `<button class="btn-buy">Comprar (${skin.price}💰)</button>`
           }
         </div>
+        ${isLocked ? '<div class="lock-badge">🔒</div>' : ""}
       `
 
       const button = skinCard.querySelector("button")
@@ -77,12 +76,67 @@ class ShopView {
           if (isOwned || skin.isDefault) {
             onEquip(skin.id)
           } else {
-            onBuy(skin.id)
+            this.showConfirmationModal(skin, onBuy)
           }
         })
       }
 
       this.skinsGrid.appendChild(skinCard)
+    })
+  }
+
+  showConfirmationModal(skin, onBuy) {
+    // Remove modais anteriores se existirem
+    const oldModal = document.querySelector(".purchase-confirmation-modal")
+    if (oldModal) oldModal.remove()
+
+    // Cria o modal de confirmação
+    const modal = document.createElement("div")
+    modal.className = "purchase-confirmation-modal"
+    modal.innerHTML = `
+      <div class="confirmation-modal-content">
+        <h2>Confirmar Compra</h2>
+        <div class="confirmation-skin-preview">
+          <img src="${skin.image}" alt="${skin.name}" class="confirmation-skin-image">
+        </div>
+        <p class="confirmation-skin-name">${skin.name}</p>
+        <p class="confirmation-price">Preço: ${skin.price}💰</p>
+        <p class="confirmation-question">Deseja comprar esta skin?</p>
+        <div class="confirmation-buttons">
+          <button class="btn-confirm-yes">Sim</button>
+          <button class="btn-confirm-no">Não</button>
+        </div>
+      </div>
+    `
+
+    document.body.appendChild(modal)
+
+    // Mostra o modal com animação
+    setTimeout(() => modal.classList.add("show"), 10)
+
+    // Botão "Sim" - confirma a compra
+    const btnYes = modal.querySelector(".btn-confirm-yes")
+    btnYes.addEventListener("click", () => {
+      modal.classList.remove("show")
+      setTimeout(() => {
+        modal.remove()
+        onBuy(skin.id)
+      }, 300)
+    })
+
+    // Botão "Não" - cancela
+    const btnNo = modal.querySelector(".btn-confirm-no")
+    btnNo.addEventListener("click", () => {
+      modal.classList.remove("show")
+      setTimeout(() => modal.remove(), 300)
+    })
+
+    // Fecha ao clicar fora
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.classList.remove("show")
+        setTimeout(() => modal.remove(), 300)
+      }
     })
   }
 

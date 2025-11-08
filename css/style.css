@@ -562,9 +562,8 @@ body.game-background-3::before {
 
 /* --- LOJA DE SKINS --- */
 #shop-view {
-  background: linear-gradient(135deg, #9873db 0%, #6d4694 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
-  /* Removendo scroll e ajustando para exibir todas as skins */
   overflow: hidden;
   display: none;
   flex-direction: column;
@@ -583,7 +582,6 @@ body.game-background-3::before {
 
 .skins-grid {
   display: grid;
-  /* Grade com 3 colunas para mostrar todas as 12 skins */
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   max-width: 500px;
@@ -597,7 +595,6 @@ body.game-background-3::before {
 .skin-card {
   background: white;
   border-radius: 12px;
-  /* Reduzindo padding */
   padding: 8px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -608,7 +605,6 @@ body.game-background-3::before {
   overflow: visible;
 }
 
-/* Bordas coloridas baseadas na raridade */
 .skin-card.rarity-comum {
   border-color: #3b82f6;
   background: linear-gradient(145deg, #ffffff, #f0f9ff);
@@ -644,12 +640,10 @@ body.game-background-3::before {
   opacity: 0.75;
 }
 
-/* Badge de raridade com cores específicas */
 .rarity-badge {
   position: absolute;
   top: 5px;
   left: 5px;
-  /* Reduzindo tamanho */
   padding: 3px 6px;
   border-radius: 4px;
   font-size: 0.6rem;
@@ -662,7 +656,7 @@ body.game-background-3::before {
 }
 
 .rarity-badge.rarity-comum {
-  background: linear-gradient(135deg, #4f8cf0, #477ae0);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
 }
 
@@ -690,9 +684,8 @@ body.game-background-3::before {
 .skin-image-container {
   position: relative;
   width: 100%;
-  /* Reduzindo altura para cards menores */
   height: 80px;
-  background: #221a1a;
+  background: linear-gradient(135deg, #fde68a 0%, #fbbf24 25%, #a78bfa 50%, #c084fc 75%, #818cf8 100%);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -705,7 +698,6 @@ body.game-background-3::before {
 
 .skin-image {
   max-width: 85%;
-  /* Reduzindo tamanho da imagem */
   max-height: 65px;
   object-fit: contain;
   image-rendering: pixelated;
@@ -719,20 +711,22 @@ body.game-background-3::before {
   transform: scale(1.05);
 }
 
-/* Removido .equipped-badge pois não é necessário */
-
-.locked-overlay {
+/* Removendo locked-overlay antigo e adicionando lock-badge no canto direito */
+.lock-badge {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 5px;
+  right: 5px;
+  font-size: 1.2rem;
   background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
-  backdrop-filter: blur(3px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  backdrop-filter: blur(4px);
 }
 
 .skin-info {
@@ -742,7 +736,6 @@ body.game-background-3::before {
 }
 
 .skin-name {
-  /* Reduzindo fonte */
   font-size: 0.8rem;
   color: #1f2937;
   margin: 0 0 3px 0;
@@ -765,7 +758,6 @@ body.game-background-3::before {
 .btn-equip,
 .btn-equipped {
   width: 100%;
-  /* Reduzindo padding do botão */
   padding: 6px;
   border: none;
   border-radius: 8px;
@@ -853,6 +845,9 @@ body.game-background-3::before {
   color: #805ad5;
   font-weight: bold;
   padding: 12px 30px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
 #shop-view .btn-back:hover {
@@ -1038,6 +1033,34 @@ body.game-background-3::before {
   100% {
     transform: scale(1);
   }
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-restart {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-restart:hover {
+  transform: translateY(-2px) rotate(180deg);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
 }
 
 .btn-continue {
@@ -1249,4 +1272,132 @@ body.game-background-3::before {
   75% {
     transform: translateY(-2px);
   }
+}
+
+/* Adicionando estilos para o modal de confirmação de compra */
+.purchase-confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.purchase-confirmation-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.confirmation-modal-content {
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: 3px solid #667eea;
+  max-width: 350px;
+  width: 90%;
+  transform: scale(0.7);
+  transition: transform 0.3s ease;
+}
+
+.purchase-confirmation-modal.show .confirmation-modal-content {
+  transform: scale(1);
+}
+
+.confirmation-modal-content h2 {
+  color: #667eea;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-skin-preview {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 15px;
+  background: linear-gradient(135deg, #fde68a 0%, #fbbf24 25%, #a78bfa 50%, #c084fc 75%, #818cf8 100%);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.confirmation-skin-image {
+  max-width: 90%;
+  max-height: 100px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.25));
+}
+
+.confirmation-skin-name {
+  font-size: 1.3rem;
+  color: #1f2937;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.confirmation-price {
+  font-size: 1.5rem;
+  color: #f59e0b;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.confirmation-question {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.confirmation-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn-confirm-yes,
+.btn-confirm-no {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-confirm-yes {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-confirm-yes:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(16, 185, 129, 0.5);
+}
+
+.btn-confirm-no {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-confirm-no:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(239, 68, 68, 0.5);
 }

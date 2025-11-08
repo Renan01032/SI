@@ -37,7 +37,7 @@ class GameModel {
         id: "avatar_princesa",
         name: "Princesa",
         image: "images/skins/avatar_princesa.png",
-        price: 150,
+        price: 100,
         unlockLevel: 2,
         isDefault: false,
         rarity: "comum",
@@ -46,35 +46,26 @@ class GameModel {
         id: "avatar_rainha",
         name: "Rainha",
         image: "images/skins/avatar_rainha.png",
-        price: 250,
+        price: 150,
         unlockLevel: 4,
         isDefault: false,
-        rarity: "rara",
+        rarity: "comum",
       },
       {
         id: "avatar_rei",
         name: "Rei",
         image: "images/skins/avatar_rei.png",
-        price: 250,
+        price: 150,
         unlockLevel: 4,
         isDefault: false,
-        rarity: "rara",
-      },     
+        rarity: "comum",
+      },
       {
         id: "avatar_fada",
         name: "Fada Mágica",
         image: "images/skins/avatar_fada.png",
-        price: 100,
-        unlockLevel: 1,
-        isDefault: false,
-        rarity: "rara",
-      },
-      {
-        id: "avatar_mago",
-        name: "Mago",
-        image: "images/skins/avatar_mago.png",
         price: 200,
-        unlockLevel: 3,
+        unlockLevel: 1,
         isDefault: false,
         rarity: "rara",
       },
@@ -82,26 +73,35 @@ class GameModel {
         id: "avatar_pirata",
         name: "Pirata",
         image: "images/skins/avatar_pirata.png",
-        price: 150,
+        price: 250,
         unlockLevel: 2,
         isDefault: false,
         rarity: "rara",
       },
       {
+        id: "avatar_mago",
+        name: "Mago",
+        image: "images/skins/avatar_mago.png",
+        price: 250,
+        unlockLevel: 3,
+        isDefault: false,
+        rarity: "rara",
+      },    
+
+      {
         id: "avatar_cavaleiro_cosmico",
         name: "Cavaleiro Cósmico",
         image: "images/skins/avatar_cavaleiro_cosmico.png",
-        price: 200,
+        price: 300,
         unlockLevel: 3,
         isDefault: false,
         rarity: "lendária",
       },
-
       {
         id: "avatar_fada_celestial",
         name: "Fada Celestial",
         image: "images/skins/avatar_fada_celestial.png",
-        price: 300,
+        price: 350,
         unlockLevel: 5,
         isDefault: false,
         rarity: "lendária",
@@ -119,7 +119,7 @@ class GameModel {
         id: "avatar_guerreiro_elemental",
         name: "Guerreiro Elemental",
         image: "images/skins/avatar_guerreiro_elemental.png",
-        price: 400,
+        price: 500,
         unlockLevel: 5,
         isDefault: false,
         rarity: "lendária",
@@ -294,33 +294,8 @@ class GameModel {
     // Se a fase completada for a última desbloqueada, avança
     if (levelId === this.state.unlockedLevel && levelId < this.levels.length) {
       this.state.unlockedLevel++
-
-      // Premia com uma skin ao completar a fase
-      this.unlockLevelRewardSkin(levelId)
-
       this.saveState()
     }
-  }
-
-  // Desbloqueia a skin de recompensa da fase
-  unlockLevelRewardSkin(levelId) {
-    const rewardSkins = {
-      1: "avatar_fada",
-      2: "avatar_pirata",
-      3: "avatar_mago",
-      4: "avatar_rainha",
-      5: "avatar_fada_celestial",
-    }
-
-    const rewardSkinId = rewardSkins[levelId]
-
-    if (rewardSkinId && !this.hasSkin(rewardSkinId)) {
-      this.state.ownedSkins.push(rewardSkinId)
-      this.saveState()
-      return rewardSkinId
-    }
-
-    return null
   }
 
   // Verifica se o jogador possui uma skin
@@ -340,10 +315,6 @@ class GameModel {
 
     if (this.state.credits < skin.price) {
       return { success: false, message: "Créditos insuficientes!" }
-    }
-
-    if (this.state.unlockedLevel < skin.unlockLevel) {
-      return { success: false, message: "Complete mais fases para desbloquear!" }
     }
 
     // Compra bem-sucedida
