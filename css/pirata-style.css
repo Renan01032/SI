@@ -1,0 +1,293 @@
+/* ============================================
+   ESTILOS PARA A FASE PIRATA
+   ============================================ */
+
+/* Tema Pirata - Cores e Textura */
+:root {
+  --cor-pirata-primaria: #2c1810;
+  --cor-pirata-secundaria: #5a3a2a;
+  --cor-pirata-destaque: #ffd700;
+  --cor-pirata-texto: #f4e4c1;
+  --cor-pirata-madeira: #8b4513;
+}
+
+/* Notificação de Desbloqueio */
+.notificacao-desbloqueio {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.notificacao-conteudo {
+  background: linear-gradient(135deg, var(--cor-pirata-primaria), var(--cor-pirata-secundaria));
+  border: 3px solid var(--cor-pirata-destaque);
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  color: var(--cor-pirata-destaque);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  max-width: 300px;
+  animation: slideIn 0.3s ease;
+}
+
+.notificacao-conteudo h3 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.notificacao-conteudo p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: var(--cor-pirata-texto);
+}
+
+.notificacao-conteudo button {
+  background: var(--cor-pirata-destaque);
+  color: var(--cor-pirata-primaria);
+  border: none;
+  padding: 10px 30px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.notificacao-conteudo button:hover {
+  transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Estilo do item da loja - Skin Pirata */
+.skin-pirata-item {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.skin-pirata-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+}
+
+/* Botão da fase pirata no grid */
+#btn-fase-pirata {
+  animation: popIn 0.4s ease;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+#btn-fase-pirata.unlocked {
+  background: linear-gradient(135deg, #d4af37, #ffd700);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+#btn-fase-pirata.unlocked:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+
+#btn-fase-pirata.locked {
+  background: #888;
+  cursor: not-allowed;
+}
+
+/* Caça-sílabas pirata */
+.caca-pirata-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 5px;
+  margin: 20px auto;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--cor-pirata-primaria), var(--cor-pirata-secundaria));
+  border-radius: 10px;
+  border: 2px solid var(--cor-pirata-destaque);
+}
+
+.celula-pirata {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--cor-pirata-primaria);
+  border: 2px solid var(--cor-pirata-destaque);
+  border-radius: 5px;
+  color: var(--cor-pirata-destaque);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.celula-pirata:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.celula-pirata.selecionada {
+  background: var(--cor-pirata-destaque);
+  color: var(--cor-pirata-primaria);
+  transform: scale(1.1);
+}
+
+.celula-pirata.correta {
+  background: #28a745;
+  color: white;
+  box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
+}
+
+/* Botões de ação pirata */
+.btn-pirata {
+  background: linear-gradient(90deg, var(--cor-pirata-madeira), var(--cor-pirata-destaque));
+  color: var(--cor-pirata-primaria);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+  font-size: 1rem;
+}
+
+.btn-pirata:hover {
+  transform: scale(1.05);
+}
+
+.btn-pirata:active {
+  transform: scale(0.95);
+}
+
+/* Cabeçalho da fase pirata */
+.header-pirata {
+  background: linear-gradient(90deg, var(--cor-pirata-primaria), var(--cor-pirata-secundaria));
+  border: 3px solid var(--cor-pirata-destaque);
+  color: var(--cor-pirata-destaque);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.header-pirata h2 {
+  font-size: 1.8rem;
+  margin: 0 0 8px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.header-pirata p {
+  font-size: 0.9rem;
+  margin: 0;
+  color: var(--cor-pirata-texto);
+}
+
+/* Feedback do jogo */
+.feedback-pirata {
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 15px;
+  min-height: 40px;
+}
+
+.feedback-pirata.sucesso {
+  background: #d4edda;
+  color: #155724;
+  border: 2px solid #28a745;
+}
+
+.feedback-pirata.erro {
+  background: #f8d7da;
+  color: #721c24;
+  border: 2px solid #dc3545;
+}
+
+.feedback-pirata.vitoria {
+  background: linear-gradient(135deg, var(--cor-pirata-destaque), #ffb6c1);
+  color: var(--cor-pirata-primaria);
+  font-size: 1.2rem;
+}
+
+/* Imagens da história pirata */
+.imagem-pirata {
+  max-width: 100%;
+  border: 3px solid var(--cor-pirata-destaque);
+  border-radius: 12px;
+  margin: 15px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Tela de vitória */
+.vitoria-pirata {
+  background: linear-gradient(135deg, var(--cor-pirata-primaria), var(--cor-pirata-secundaria));
+  color: var(--cor-pirata-destaque);
+  text-align: center;
+  padding: 40px 20px;
+  border-radius: 15px;
+}
+
+.vitoria-pirata h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+}
+
+.vitoria-pirata .recompensas {
+  background: rgba(255, 215, 0, 0.2);
+  padding: 20px;
+  border-radius: 10px;
+  border: 3px solid var(--cor-pirata-destaque);
+  margin: 20px 0;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .notificacao-conteudo {
+    max-width: 90%;
+  }
+
+  .header-pirata h2 {
+    font-size: 1.4rem;
+  }
+
+  .vitoria-pirata h1 {
+    font-size: 2rem;
+  }
+}

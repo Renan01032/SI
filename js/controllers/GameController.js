@@ -229,6 +229,8 @@ class GameController {
       this.showLevelSelect()
     }, 1500)
   }
+
+  
 }
 
 window.GameController = GameController
